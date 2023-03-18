@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "type_traits": "c",
+        "__split_buffer": "c",
+        "array": "c",
+        "queue": "c",
+        "vector": "c",
+        "deque": "c",
+        "string_view": "c",
+        "myqueue.h": "c"
+    }
+}
