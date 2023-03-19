@@ -1,33 +1,54 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "myqueue.h"
+#include "myqueue.h" // Подключаем собственный заголовочный файл
+
+void scan_queue(MyQueue* queue, int size) // Ввод очереди
+{
+    for (int i = 0; i < size; i++) {
+        printf("\t(Adding node №%d...) Enter node value : ", i + 1);
+        int value;
+        scanf("%d", &value);
+        push_back(queue, newNode(value));
+    }
+}
 
 int main() {
-    MyQueue* queue = createQueue();
 
-    printf("queue #1...\n");
-    push_back(queue, newNode(13));
-    push_back(queue, newNode(10));
-    push_back(queue, newNode(20));
-    push_back(queue, newNode(4));
-    push_back(queue, newNode(12));
-    push_back(queue, newNode(7));
-    push_back(queue, newNode(5));
-    print_queue(queue);
+    printf("How many queue structures would you like to merge?\n");
+    int q_num;
+    scanf("%d", &q_num);
 
-    MyQueue* q2 = createQueue(); 
+    if (q_num <= 0) {
+        printf("You've chosen not to merge any queues\n");
+        return 0;
+    }
 
-    push_back(queue, newNode(2));
-    push_back(queue, newNode(1));
-    push_back(queue, newNode(0));
+    MyQueue* merged_queue = createQueue(); // Результирующая очередь
+    MyQueue* new_queue; // Следующая очередь по списку
 
-    queue = join(queue, q2);
-    printf("queue #2...\n");
-    print_queue(queue);
+    for (int i = 0; i < q_num; i++) {
+        new_queue = createQueue();
+        MyQueue* temp_q = merged_queue;
+        // Ввод количества узлов в очереди
+        printf("Please, enter the amount of nodes that queue <%d> will contain: ", i + 1);
+        int nodes_num;
+        scanf("%d", &nodes_num);
+        scan_queue(new_queue, nodes_num); // Чтение очереди
+        // Вывод полученной очереди
+        printf("You've constructed a queue:\n");
+        print_queue(new_queue);
+        printf("\n");
+        // Функция join также очищает память двух входных очередей после слияния
+        merged_queue = join(temp_q, new_queue); // Конкатенация двух очередей
+    }
 
-    queue = quick_sort(queue);
+    printf("Merging queues...\n");
+    print_queue(merged_queue);
+    printf("\n");
 
-    print_queue(queue);
+    printf("Sorting queue using quick_sort...\n");
+    merged_queue = quick_sort(merged_queue); // Быстрая сортировка Хоара
+    print_queue(merged_queue);
 
     return 0;
 }
