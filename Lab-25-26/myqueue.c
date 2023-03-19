@@ -1,78 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "myqueue.h"
 
-typedef struct _queue_node {
+typedef struct _queue_node { // Структура узла очереди
     int value;
     struct _queue_node* next_node;
 } QueueNode;
 
-typedef struct _my_queue {
+typedef struct _my_queue { // Структура очереди (размер, нач. и конеч. узлы)
     int size;
     QueueNode* front; // Первый элемент
     QueueNode* back; // Последний элемент
 } MyQueue;
 
-MyQueue* createQueue() 
+MyQueue* createQueue() // Создание пустой очереди
 {
-    MyQueue* new_queue = (MyQueue*)malloc(sizeof(MyQueue));
+    MyQueue* new_queue = (MyQueue*)malloc(sizeof(MyQueue)); // Резервируем память
     new_queue->size = 0;
     new_queue->front = NULL;
     new_queue->back = NULL;
     return new_queue;
 }
 
-QueueNode* newNode(int value)
+QueueNode* newNode(int value) // Конструктор узла
 {
-    QueueNode* new_node = (QueueNode*)malloc(sizeof(QueueNode));
+    QueueNode* new_node = (QueueNode*)malloc(sizeof(QueueNode)); // Резервируем память
     new_node->value = value;
     new_node->next_node = NULL;
     return new_node;
 }
 
-void push_back(MyQueue* queue, QueueNode* node)
+void push_back(MyQueue* queue, QueueNode* node) // Добавление элемента в конец
 {
-    if (queue->back == NULL) {
+    if (node == NULL) { // Если узел не имеет смысла
+        return;
+    }
+    if (queue->back == NULL) { // Если очередь ещё пуста
         queue->back = queue->front = node;
         queue->size++;
         return;
     }
     queue->back->next_node = node;
     queue->back = node;
+    node->next_node = NULL;
     queue->size++;
     return;
 }
 
-void pop_front(MyQueue* queue)
+int* pop_front(MyQueue* queue) // Извлекаем узел из начала очереди
 {
     if (queue->front == NULL) { // Если нет элементов в очереди
-        return;
+        return NULL;
     }
     QueueNode* front_node = queue->front;
-    if (front_node->next_node == NULL) { // Если нет следующего элемента
-        front_node = NULL;
-        queue->size--;
-        return;
-    }
+    int value = front_node->value; // Значение узла
+
     queue->front = front_node->next_node;
-    free(front_node);
+    free(front_node); // Очищаем память по ссылке
+    front_node = NULL;
     queue->size--;
-    return;
+
+    int* result = malloc(sizeof(int)); // Резерв. память под результат (т.к. int*)
+    *result = value;
+    return result;
 }
 
-MyQueue* join(MyQueue* q1, MyQueue* q2)
+MyQueue* join(MyQueue* q1, MyQueue* q2) // Конкатенация двух очередей
 {
-    if (q1->front == NULL || q2->front == NULL) {
-        return;
-    } 
-    QueueNode* last_q1 = q1->back;
-    QueueNode* first_q2 = q2->front;
-    last_q1->next_node = first_q2;
-    q1->size += q2->size;
-    return q1;
+    MyQueue* result = createQueue(); // Создаем результирующую очередь
+    int* current_value;
+    while ( ( current_value = pop_front(q1) ) != NULL) {
+        push_back(result, newNode(*current_value));
+    }
+    while ( ( current_value = pop_front(q2) ) != NULL) {
+        push_back(result, newNode(*current_value));
+    }
+    
+    return result;
 }
 
-void print_queue(MyQueue* queue)
+void print_queue(MyQueue* queue) // Вывод очереди
 {
     QueueNode* current_node = queue->front;
 
@@ -87,45 +95,49 @@ void print_queue(MyQueue* queue)
     return;
 }
 
-MyQueue* quick_sort(MyQueue* queue)
+void queue_free(MyQueue* queue) // Освобождение памяти, занимаемой очередью
 {
-    if (queue->size <= 1){
+    QueueNode* current_node = queue->front;
+    if (current_node == NULL) {
+        return;
+    }
+    for (int i = 0; i < queue->size; i++) {
+        QueueNode* temp_ptr = current_node; // Временная ссылка на узел
+        current_node = current_node->next_node;
+        free(temp_ptr); // Удаление по временной ссылке
+    }
+    return;
+}
+
+MyQueue* quick_sort(MyQueue* queue) // Быстрая сортировка Хоара
+{
+    if (queue->size <= 1) { // Условие выхода из рекурсии
         return queue;
     }
-    int q_size = queue->size;
-    int pivot_id = q_size / 2;
-    QueueNode* pivot = queue->front;
-    for (int i = 0; i < pivot_id; i++) {
-        pivot = pivot->next_node;
-    }
 
-    QueueNode* current_node = queue->front;
-    MyQueue* left_q = createQueue();
-    MyQueue* right_q = createQueue();;
+    MyQueue* left_q = createQueue(); // Левая очередь
+    MyQueue* right_q = createQueue(); // Правая очередь
 
-    int p_value = pivot->value;
-
-    for (int i = 0; i < q_size; i++) {
-        int c_value = current_node->value;
-        printf("(%d)\n", i);
-        if (c_value < p_value){
-            push_back(left_q, newNode(c_value));
+    // Опорный узел - первый узел входной очереди
+    int pivot = *pop_front(queue); // Значение опорного узла
+    int* current_value; // Декларация ссылки на значение иного узла
+    while ( ( current_value = pop_front(queue) ) != NULL) {
+        if (*current_value < pivot) {
+            push_back(left_q, newNode(*current_value));
         } else {
-            push_back(right_q, newNode(c_value));
-        }
-        if (current_node->next_node != NULL) {
-            current_node = current_node->next_node;
+            push_back(right_q, newNode(*current_value));
         }
     }
+    // Добавляем опорный узел в правую очередь
+    push_back(right_q, newNode(pivot));
 
-    left_q = quick_sort(left_q);
-    right_q = quick_sort(right_q);
+    // Рекурсия
+    queue = join(quick_sort(left_q), quick_sort(right_q));
 
-    join(left_q, right_q);
-    
-    MyQueue res = *left_q;
-    free(left_q);
-    free(right_q);
+    // Освобождаем выделенную память
+    queue_free(left_q);
+    queue_free(right_q);
+    free(current_value);
 
-    return &res;
+    return queue;
 }

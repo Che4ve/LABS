@@ -1,10 +1,11 @@
+// ЗАГОЛОВОЧНЫЙ ФАЙЛ КАСТОМНОЙ ОЧЕРЕДИ
 #ifndef __MYQUEUE_H__
 #define __MYQUEUE_H__
 
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct _queue_node QueueNode;
+typedef struct _queue_node QueueNode; 
 
 typedef struct _my_queue MyQueue;
 
@@ -14,7 +15,7 @@ QueueNode* newNode(int value);
 
 void push_back(MyQueue* queue, QueueNode* node);
 
-void pop_front(MyQueue* queue);
+int* pop_front(MyQueue* queue);
 
 MyQueue* join(MyQueue* q1, MyQueue* q2);
 
