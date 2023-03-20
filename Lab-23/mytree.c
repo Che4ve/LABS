@@ -1,27 +1,62 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "mytree.h"
 
 #define INF 1e9
 
-typedef struct TreeNode {
-    int value;
-    int num_siblings;
-    struct TreeNode* first_child;
-    struct TreeNode* next_sibling;
-} TreeNode;
+Tree* createTree(int root_value)
+{
+    Tree* new_tree = malloc(sizeof(Tree));
+    new_tree->root = newNode(root_value);
+    new_tree->depth = 1;
+    new_tree->width = 1;
+    return new_tree;
+}
 
-typedef struct Tree {
-    struct TreeNode* root;
-} Tree;
-
-TreeNode* create_node(int value)
+TreeNode* newNode(int value)
 {
     TreeNode* new_node = malloc(sizeof(TreeNode));
     new_node->value = value;
-    new_node->num_siblings = 0;
+    new_node->children_num = 0;
+    new_node->prev_sibling = NULL;
     new_node->next_sibling = NULL;
     new_node->first_child = NULL;
+    new_node->parent = NULL;
     return new_node;
+}
+
+TreeNode* get_root(Tree* tree)
+{
+    return tree->root;
+}
+
+TreeNode* get_child(TreeNode* parent, int number)
+{
+    if (parent == NULL) {
+        return NULL;
+    }
+    TreeNode* child = parent->first_child;
+    for (int i = 1; i < number; i++) {
+        if (child == NULL) {
+            break;
+        }
+        child = child->next_sibling;
+    }
+    return child;
+}
+
+TreeNode* get_sibling(TreeNode* node, int number)
+{
+    if (node == NULL) {
+        return NULL;
+    }
+    TreeNode* sibling = node->next_sibling;
+    if (sibling != NULL) printf("sibl: %d\n", sibling->value);
+    for (int i = 1; i < number; i++) {
+        if (sibling == NULL) {
+            break;
+        }
+        sibling = sibling->next_sibling;
+    }
+    return sibling;
 }
 
 void add_child(TreeNode* parent, TreeNode* node)
@@ -35,14 +70,47 @@ void add_child(TreeNode* parent, TreeNode* node)
         }
         space_for_node->next_sibling = node;
     }
-    node->num_siblings++;
+    parent->children_num++;
+    return;
+}
+
+void delete_tree_from(TreeNode** node, TreeNode* initial_node)
+{  
+    printf("on node (%d)\n", (*node)->value);
+    if ((*node) == initial_node) printf("equal\n");
+    if ((*node)->first_child != NULL) {
+        int gay = (*node)->first_child->value;
+        delete_tree_from(&(*node)->first_child, initial_node);
+        printf("from (%d), back to (%d)\n",gay ,(*node)->value);
+    }
+    if ((*node)->next_sibling != NULL && (*node) != initial_node) {
+        int gay = (*node)->next_sibling->value;
+        delete_tree_from(&(*node)->next_sibling, initial_node);
+        printf("from (%d), back to (%d)\n",gay ,(*node)->value);
+    }
+    if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
+        printf("deleting node [%d]\n", (*node)->value);
+        free(*node);
+        *node = NULL;
+    }
+    if ( (*node) == initial_node && (*node)->first_child == NULL ) {
+        free(*node);
+        *node = NULL;
+    }
+    return;
+}
+
+void free_tree(Tree* tree)
+{
+    TreeNode** p_root = &(tree->root);
+    delete_tree_from(p_root, *p_root);
     return;
 }
 
 void print_tree(Tree* tree) 
 {
     TreeNode* root = tree->root;
-    TreeNode* current_node = root->first_child;
+    TreeNode* current_node = root;
     while (current_node != NULL) {
         printf("%d, ", current_node->value);
         current_node = current_node->next_sibling;
@@ -52,14 +120,16 @@ void print_tree(Tree* tree)
 
 int min_dfs(TreeNode* node, int len, int min_len)
 {
+    TreeNode* first_cihld = get_child(node, 1);
+    TreeNode* first_sibling = get_sibling(node, 1);
     printf("{%d, %d}\n", len, min_len);
-    if (node->first_child != NULL) {
-        min_len = min_dfs(node->first_child, len + 1, min_len);
+    if (first_cihld != NULL) {
+        min_len = min_dfs(first_cihld, len + 1, min_len);
     }
-    if (node->next_sibling != NULL) {
-        min_len = min_dfs(node->next_sibling, len, min_len);
+    if (first_sibling != NULL) {
+        min_len = min_dfs(first_sibling, len, min_len);
     }
-    if (node->first_child == NULL) {
+    if (first_cihld == NULL) {
         if (min_len > len) {
             min_len = len;
             printf("least node: %d\n", node->value);
@@ -71,29 +141,3 @@ int min_dfs(TreeNode* node, int len, int min_len)
 
 
 
-int main() {
-    // Create a tree with root node 1
-    Tree myTree;
-    myTree.root = create_node(1);
-
-    add_child(myTree.root, create_node(2));
-    add_child(myTree.root, create_node(3));
-    add_child(myTree.root, create_node(6));
-
-    add_child(myTree.root->first_child, create_node(4));
-    add_child(myTree.root->first_child, create_node(5));
-
-    add_child(myTree.root->first_child->first_child, create_node(9));
-
-    add_child(myTree.root->first_child->first_child->next_sibling, create_node(10));
-
-    add_child(myTree.root->first_child->next_sibling, create_node(7));
-
-    add_child(myTree.root->first_child->next_sibling->next_sibling, create_node(8));
-
-    print_tree(&myTree);
-
-    printf("MinPath: %d\n", min_dfs(myTree.root, 1, INF));
-
-    return 0;
-}

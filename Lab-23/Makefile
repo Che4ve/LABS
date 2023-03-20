@@ -2,7 +2,7 @@ CC = gcc
 DEGUGGER = gdb
 CFLAGS = -std=c11 -Wall -Werror
 FILE_OUT = tree.out
-SOURCES = mytree.c
+SOURCES = mytree.c main.c
 
 all:
 	$(CC) $(CFLAGS) $(SOURCES) -o $(FILE_OUT)
@@ -10,6 +10,7 @@ all:
 	rm -f $(FILE_OUT)
 clean:
 	rm -f *.out
+	rm -f a.exe
 debug:
 	$(CC) $(CFLAGS) -g $(SOURCES) 
 	sudo $(DEGUGGER) $(FILE_OUT)
