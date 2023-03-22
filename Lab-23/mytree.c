@@ -90,28 +90,28 @@ TreeNode* get_prev_sibling(TreeNode* node)
 void delete_tree_from(TreeNode** node, TreeNode* initial_node)
 {
     if ((*node)->first_child != NULL) {
-        int next_sib = (*node)->first_child->value;
         delete_tree_from(&(*node)->first_child, initial_node);
     }
     if ((*node)->next_sibling != NULL && (*node) != initial_node) {
-        int next_sib = (*node)->next_sibling->value;
         delete_tree_from(&(*node)->next_sibling, initial_node);
-    }
-    if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
-        free(*node);
-        *node = NULL;
     }
     if ((*node) == initial_node && (*node)->first_child == NULL) {
         TreeNode* prev_sibling = (*node)->prev_sibling;
         TreeNode* tmp_node = (*node);
         if (prev_sibling != NULL) {
             (prev_sibling->next_sibling) = (*node)->next_sibling;
-            (*node)->prev_sibling = prev_sibling;
+            if (*node != NULL) {
+                (*node)->prev_sibling = prev_sibling;
+            }
         }
         free(tmp_node);
         tmp_node = NULL;
         initial_node = NULL;
-        printf("hello");
+        *node = NULL; // !
+    }
+    else if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
+        free(*node);
+        *node = NULL;
     }
     return;
 }
@@ -154,6 +154,3 @@ int min_dfs(TreeNode* node, int len, int min_len)
     return min_len;
 
 }
-
-
-
