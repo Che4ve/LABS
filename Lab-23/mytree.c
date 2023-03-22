@@ -27,15 +27,14 @@ void add_child(TreeNode* parent, TreeNode* node)
 {
     if (parent->first_child == NULL) {
         parent->first_child = node;
-    } else {
-        TreeNode* space_for_node = parent->first_child;
-        TreeNode* prev_node = space_for_node;
-        while (space_for_node->next_sibling != NULL) {
-            prev_node = space_for_node;
-            space_for_node = space_for_node->next_sibling;
+    }
+    else {
+        TreeNode* last_sibling = parent->first_child;
+        while (last_sibling->next_sibling != NULL) {
+            last_sibling = last_sibling->next_sibling;
         }
-        node->prev_sibling = prev_node;
-        space_for_node->next_sibling = node;
+        node->prev_sibling = last_sibling;
+        last_sibling->next_sibling = node;
     }
     parent->children_num++;
     node->parent = parent;
@@ -47,7 +46,7 @@ TreeNode* get_root(Tree* tree)
     return tree->root;
 }
 
-TreeNode* get_parent(TreeNode* node) 
+TreeNode* get_parent(TreeNode* node)
 {
     return node->parent;
 }
@@ -89,39 +88,30 @@ TreeNode* get_prev_sibling(TreeNode* node)
 }
 
 void delete_tree_from(TreeNode** node, TreeNode* initial_node)
-{  
-    printf("on node (%d)\n", (*node)->value);
-    if ((*node) == initial_node) printf("equal\n");
+{
     if ((*node)->first_child != NULL) {
         int next_sib = (*node)->first_child->value;
         delete_tree_from(&(*node)->first_child, initial_node);
-        printf("from (%d), back to (%d)\n",next_sib ,(*node)->value);
     }
     if ((*node)->next_sibling != NULL && (*node) != initial_node) {
         int next_sib = (*node)->next_sibling->value;
         delete_tree_from(&(*node)->next_sibling, initial_node);
-        printf("from (%d), back to (%d)\n",next_sib ,(*node)->value);
     }
     if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
-        printf("deleting node [%d]\n", (*node)->value);
         free(*node);
         *node = NULL;
     }
-    if ( (*node) == initial_node && (*node)->first_child == NULL ) {
+    if ((*node) == initial_node && (*node)->first_child == NULL) {
         TreeNode* prev_sibling = (*node)->prev_sibling;
-        printf("Init. node - [%p], prev sibling - [%p]\n", (*node), (prev_sibling));
-        printf("next sibl is [%p]\n", (*node)->next_sibling);
+        TreeNode* tmp_node = (*node);
         if (prev_sibling != NULL) {
             (prev_sibling->next_sibling) = (*node)->next_sibling;
-            //(*node)->next_sibling->prev_sibling = prev_sibling;
+            (*node)->prev_sibling = prev_sibling;
         }
-        //(*node)->next_sibling = NULL;
-        //(*node)->prev_sibling = NULL;
-        //(*node)->parent = NULL;
-        printf("Now [%p] next_sib is [%p]\n", (prev_sibling), (prev_sibling)->next_sibling);
-        printf("Now [%p] next_sib is [%p]\n", (*node), (*node)->next_sibling);
-        free(*node);
-        *node = NULL;
+        free(tmp_node);
+        tmp_node = NULL;
+        initial_node = NULL;
+        printf("hello");
     }
     return;
 }
@@ -133,7 +123,7 @@ void free_tree(Tree* tree)
     return;
 }
 
-void print_tree(Tree* tree) 
+void print_tree(Tree* tree)
 {
     TreeNode* root = tree->root;
     TreeNode* current_node = root->first_child;

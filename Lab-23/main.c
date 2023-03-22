@@ -30,12 +30,14 @@ int main() {
     printf("Min depth is: %d\n", min_dfs(root, 1, INF));
 
     TreeNode** second_child = &(root->first_child->next_sibling); // 3
-    printf("2 [%p] sibling is %p\n",(root->first_child), *second_child);
-    delete_tree_from(second_child, root->first_child->next_sibling); // 3
+    TreeNode** third_child = &(root->first_child->next_sibling->next_sibling); // 6
+    printf("2 [%p] sibling is %p\n", (root->first_child), *second_child);
+    delete_tree_from(third_child, *third_child); // 3
     printf("-------------\n");
     printf("2 sibling is %p\n", root->first_child->next_sibling);
     print_tree(myTree);
-    free_tree(myTree);
-    //print_tree(myTree);
+    delete_tree_from(second_child, *second_child); // 3
+    //free_tree(myTree);
+    print_tree(myTree);
     return 0;
 }
