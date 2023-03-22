@@ -24,15 +24,17 @@ Tree* createTree(int root_value);
 
 TreeNode* newNode(int value);
 
+void add_child(TreeNode* parent, TreeNode* node);
+
 TreeNode* get_root(Tree* tree);
 
-//TreeNode* get_parent(TreeNode* node);
+TreeNode* get_parent(TreeNode* node);
 
 TreeNode* get_child(TreeNode* parent, int number);
 
-TreeNode* get_sibling(TreeNode* node, int number);
+TreeNode* get_next_sibling(TreeNode* node, int number);
 
-void add_child(TreeNode* parent, TreeNode* node);
+TreeNode* get_prev_sibling(TreeNode* node);
 
 void delete_tree_from(TreeNode** node, TreeNode* initial_node);
 

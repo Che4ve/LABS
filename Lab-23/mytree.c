@@ -23,9 +23,33 @@ TreeNode* newNode(int value)
     return new_node;
 }
 
+void add_child(TreeNode* parent, TreeNode* node)
+{
+    if (parent->first_child == NULL) {
+        parent->first_child = node;
+    } else {
+        TreeNode* space_for_node = parent->first_child;
+        TreeNode* prev_node = space_for_node;
+        while (space_for_node->next_sibling != NULL) {
+            prev_node = space_for_node;
+            space_for_node = space_for_node->next_sibling;
+        }
+        node->prev_sibling = prev_node;
+        space_for_node->next_sibling = node;
+    }
+    parent->children_num++;
+    node->parent = parent;
+    return;
+}
+
 TreeNode* get_root(Tree* tree)
 {
     return tree->root;
+}
+
+TreeNode* get_parent(TreeNode* node) 
+{
+    return node->parent;
 }
 
 TreeNode* get_child(TreeNode* parent, int number)
@@ -43,7 +67,7 @@ TreeNode* get_child(TreeNode* parent, int number)
     return child;
 }
 
-TreeNode* get_sibling(TreeNode* node, int number)
+TreeNode* get_next_sibling(TreeNode* node, int number)
 {
     if (node == NULL) {
         return NULL;
@@ -59,19 +83,9 @@ TreeNode* get_sibling(TreeNode* node, int number)
     return sibling;
 }
 
-void add_child(TreeNode* parent, TreeNode* node)
+TreeNode* get_prev_sibling(TreeNode* node)
 {
-    if (parent->first_child == NULL) {
-        parent->first_child = node;
-    } else {
-        TreeNode* space_for_node = parent->first_child;
-        while (space_for_node->next_sibling != NULL) {
-            space_for_node = space_for_node->next_sibling;
-        }
-        space_for_node->next_sibling = node;
-    }
-    parent->children_num++;
-    return;
+    return node->prev_sibling;
 }
 
 void delete_tree_from(TreeNode** node, TreeNode* initial_node)
@@ -79,14 +93,14 @@ void delete_tree_from(TreeNode** node, TreeNode* initial_node)
     printf("on node (%d)\n", (*node)->value);
     if ((*node) == initial_node) printf("equal\n");
     if ((*node)->first_child != NULL) {
-        int gay = (*node)->first_child->value;
+        int next_sib = (*node)->first_child->value;
         delete_tree_from(&(*node)->first_child, initial_node);
-        printf("from (%d), back to (%d)\n",gay ,(*node)->value);
+        printf("from (%d), back to (%d)\n",next_sib ,(*node)->value);
     }
     if ((*node)->next_sibling != NULL && (*node) != initial_node) {
-        int gay = (*node)->next_sibling->value;
+        int next_sib = (*node)->next_sibling->value;
         delete_tree_from(&(*node)->next_sibling, initial_node);
-        printf("from (%d), back to (%d)\n",gay ,(*node)->value);
+        printf("from (%d), back to (%d)\n",next_sib ,(*node)->value);
     }
     if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
         printf("deleting node [%d]\n", (*node)->value);
@@ -94,6 +108,18 @@ void delete_tree_from(TreeNode** node, TreeNode* initial_node)
         *node = NULL;
     }
     if ( (*node) == initial_node && (*node)->first_child == NULL ) {
+        TreeNode* prev_sibling = (*node)->prev_sibling;
+        printf("Init. node - [%p], prev sibling - [%p]\n", (*node), (prev_sibling));
+        printf("next sibl is [%p]\n", (*node)->next_sibling);
+        if (prev_sibling != NULL) {
+            (prev_sibling->next_sibling) = (*node)->next_sibling;
+            //(*node)->next_sibling->prev_sibling = prev_sibling;
+        }
+        //(*node)->next_sibling = NULL;
+        //(*node)->prev_sibling = NULL;
+        //(*node)->parent = NULL;
+        printf("Now [%p] next_sib is [%p]\n", (prev_sibling), (prev_sibling)->next_sibling);
+        printf("Now [%p] next_sib is [%p]\n", (*node), (*node)->next_sibling);
         free(*node);
         *node = NULL;
     }
@@ -110,7 +136,7 @@ void free_tree(Tree* tree)
 void print_tree(Tree* tree) 
 {
     TreeNode* root = tree->root;
-    TreeNode* current_node = root;
+    TreeNode* current_node = root->first_child;
     while (current_node != NULL) {
         printf("%d, ", current_node->value);
         current_node = current_node->next_sibling;
@@ -121,7 +147,7 @@ void print_tree(Tree* tree)
 int min_dfs(TreeNode* node, int len, int min_len)
 {
     TreeNode* first_cihld = get_child(node, 1);
-    TreeNode* first_sibling = get_sibling(node, 1);
+    TreeNode* first_sibling = get_next_sibling(node, 1);
     printf("{%d, %d}\n", len, min_len);
     if (first_cihld != NULL) {
         min_len = min_dfs(first_cihld, len + 1, min_len);
