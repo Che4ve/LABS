@@ -1,4 +1,4 @@
-#include "mytree.h"
+﻿#include "mytree.h"
 
 #define INF 1e9
 
@@ -6,8 +6,6 @@ Tree* createTree(int root_value)
 {
     Tree* new_tree = malloc(sizeof(Tree));
     new_tree->root = newNode(root_value);
-    new_tree->depth = 1;
-    new_tree->width = 1;
     return new_tree;
 }
 
@@ -15,7 +13,6 @@ TreeNode* newNode(int value)
 {
     TreeNode* new_node = malloc(sizeof(TreeNode));
     new_node->value = value;
-    new_node->children_num = 0;
     new_node->prev_sibling = NULL;
     new_node->next_sibling = NULL;
     new_node->first_child = NULL;
@@ -36,9 +33,13 @@ void add_child(TreeNode* parent, TreeNode* node)
         node->prev_sibling = last_sibling;
         last_sibling->next_sibling = node;
     }
-    parent->children_num++;
     node->parent = parent;
     return;
+}
+
+int get_value(TreeNode* node)
+{
+    return node->value;
 }
 
 TreeNode* get_root(Tree* tree)
@@ -120,18 +121,31 @@ void free_tree(Tree* tree)
 {
     TreeNode** p_root = &(tree->root);
     delete_tree_from(p_root, *p_root);
+    free(tree);
     return;
 }
 
-void print_tree(Tree* tree)
-{
-    TreeNode* root = tree->root;
-    TreeNode* current_node = root->first_child;
-    while (current_node != NULL) {
-        printf("%d, ", current_node->value);
-        current_node = current_node->next_sibling;
+void print_tree(TreeNode* root, int indent) {
+    if (root == NULL) {
+        return;
     }
-    printf("\n");
+
+    for (int i = 0; i < indent; i++) {
+        if (i == indent - 1) {
+            printf(" |-");
+        }
+        else {
+            printf("   ");
+        }
+    }
+    printf("{%d}\n", root->value);
+
+    TreeNode* child = root->first_child;
+    while (child != NULL) {
+        print_tree(child, indent + 1);
+        child = child->next_sibling;
+    }
+    return;
 }
 
 int min_dfs(TreeNode* node, int len, int min_len)
@@ -152,5 +166,4 @@ int min_dfs(TreeNode* node, int len, int min_len)
         }
     }
     return min_len;
-
 }

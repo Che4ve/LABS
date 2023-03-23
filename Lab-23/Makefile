@@ -1,6 +1,6 @@
 CC = gcc
 DEGUGGER = gdb
-CFLAGS = -std=c11 -Wall -Werror
+CFLAGS = -std=c17 -Wall -Werror
 FILE_OUT = tree.out
 SOURCES = mytree.c main.c
 
