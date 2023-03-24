@@ -11,10 +11,52 @@ void tree_builder_ui(Tree* tree);
 
 void option_selector(char option, Tree* tree);
 
+void deleting_root_ui(Tree* tree)
+{
+    printf("Are you sure you want to delete root node? [y/n]\n");
+    fflush(stdin);
+    char option; 
+    scanf(" %c", &option);
+    
+    switch (option) {
+        case 'y':
+            free_tree(tree);
+            tree_builder_ui(NULL);
+            break;
+        case 'n':
+            tree_builder_ui(tree);
+            break;
+        default:
+            printf("invalid option.\n");
+            tree_builder_ui(tree);
+            break;
+    }
+}
+
+TreeNode* get_node_from_path(Tree* tree, char* path)
+{
+    TreeNode* root = get_root(tree);
+    TreeNode* parent = root;
+    char* cursor = path;
+    while (cursor < path + strlen(path) - 1) {
+        long child_num = strtol(cursor, &cursor, 10);
+        if (child_num > get_child_count(parent)) {
+            printf("incorrect path. Please, try again\n");
+            return NULL;
+        }
+        while (*cursor == ' ') {
+            cursor++;
+        }
+        if (child_num != 0) {
+            parent = get_child(parent, child_num);
+        }
+    }
+    return parent;
+}
+
 void tree_builder_ui(Tree* tree)
 {
     if (tree == NULL) {
-        printf("Welcome to the TreeBuilder48 program!\n");
         printf("Creating a new tree... Enter root value: ");
         int root_v; scanf("%d", &root_v);
         tree = createTree(root_v);
@@ -26,6 +68,7 @@ void tree_builder_ui(Tree* tree)
         [4] Print tree\n \
         [5] Delete tree\n \
         [q] Quit\n");
+    fflush(stdin);
     char option; 
     scanf(" %c", &option);
     option_selector(option, tree);
@@ -44,20 +87,13 @@ void option_selector(char option, Tree* tree)
                 printf("Enter path to parent using child numeration.\n");
                 printf("For example, the path for\n(root) -> (third child) -> (first child) is '0 3 1'\n");
                 printf("Enter path to the parent node: ");
-                char path[MAX_STR_LEN];
-                //fgets(path, MAX_STR_LEN, stdin);
-                printf("%s\n", path);
-                char* cursor = path;
-                TreeNode* parent = root;
-                while (cursor != path + strlen(path)) {
-                    long child_num = strtol(cursor, &cursor, 0);
-                    while (*cursor == ' ') {
-                        cursor++;
-                    }
-                    if (child_num != 0) {
-                        parent = get_child(parent, child_num);
-                    }
-                }
+                TreeNode* parent;
+                do {
+                    fflush(stdin);
+                    char path[MAX_STR_LEN];
+                    fgets(path, MAX_STR_LEN, stdin);
+                    parent = get_node_from_path(tree, path);
+                } while ( parent == NULL );
                 printf("Enter node value: ");
                 int value; scanf("%d", &value);
                 add_child(parent, newNode(value));
@@ -68,13 +104,39 @@ void option_selector(char option, Tree* tree)
             tree_builder_ui(tree);
             break;
         case '2':
-
+            if (get_child(root, 1) == NULL) {
+                deleting_root_ui(tree);
+            }
+            printf("Enter path to a child you want to delete (recursively).\n");
+            printf("Use child numeration.\n");
+            printf("For example, the path for\n(root) -> (third child) -> (first child) is '0 3 1'\n");
+            printf("Enter path to the parent node: ");
+            TreeNode* node;
+            do {
+                fflush(stdin);
+                char path[MAX_STR_LEN];
+                fgets(path, MAX_STR_LEN, stdin);
+                node = get_node_from_path(tree, path);
+            } while ( node == NULL );
+            if (node == get_root(tree)) {
+                deleting_root_ui(tree);
+                break;
+            }
+            printf("pointer to node %p\n", (node));
+            delete_tree_from(&node, node);
+            printf("Now tree looks like this:\n");
+            print_tree(root, 0);
+            printf("<===============>\n");
+            tree_builder_ui(tree);
             break;
         case '3':
         
             break;
         case '4':
-        
+            printf("<===============>\n");
+            print_tree(root, 0);
+            printf("<===============>\n");
+            tree_builder_ui(tree);
             break;
         case '5':
         
@@ -84,13 +146,16 @@ void option_selector(char option, Tree* tree)
             break;
         default:
             printf("invalid option.\n");
+            tree_builder_ui(tree);
             break;
     }
 }
 
+
+
 int main() {
     // Create a tree with root node 1
-
+    printf("===== Welcome to the TreeBuilder48 program =====\n");
     tree_builder_ui(NULL);
 
     /* Tree* myTree = createTree(1);

@@ -7,6 +7,7 @@
 
 typedef struct _tree_node {
     int value;
+    int child_count;
     struct _tree_node* first_child;
     struct _tree_node* prev_sibling;
     struct _tree_node* next_sibling;
@@ -34,6 +35,8 @@ TreeNode* get_child(TreeNode* parent, int number);
 TreeNode* get_next_sibling(TreeNode* node, int number);
 
 TreeNode* get_prev_sibling(TreeNode* node);
+
+int get_child_count(TreeNode* node);
 
 void delete_tree_from(TreeNode** node, TreeNode* initial_node);
 
