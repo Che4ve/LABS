@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+//#define NULL ((char *)0)
 
 typedef struct _tree_node {
     int value;
@@ -38,7 +39,9 @@ TreeNode* get_prev_sibling(TreeNode* node);
 
 int get_child_count(TreeNode* node);
 
-void delete_tree_from(TreeNode** node, TreeNode* initial_node);
+TreeNode** get_real_ref(Tree* tree, TreeNode* node);
+
+void delete_tree_from(Tree* tree, TreeNode** node, TreeNode* initial_node);
 
 void free_tree(Tree* tree);
 
