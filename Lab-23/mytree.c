@@ -1,17 +1,19 @@
-﻿#include "mytree.h"
+﻿// SOURCE FILE OF LIBRARY "mytree.h"
+#include "mytree.h"
 
 #define INF 1e9
 
 Tree* createTree(int root_value)
 {
-    Tree* new_tree = malloc(sizeof(Tree));
-    new_tree->root = newNode(root_value);
+    Tree* new_tree = malloc(sizeof(Tree));  // Memory allocation
+    new_tree->root = newNode(root_value); // Creating a root node
     return new_tree;
 }
 
 TreeNode* newNode(int value)
 {
-    TreeNode* new_node = malloc(sizeof(TreeNode));
+    TreeNode* new_node = malloc(sizeof(TreeNode));  // Memory allocation
+    // Initializing properties
     new_node->value = value;
     new_node->child_count = 0;
     new_node->prev_sibling = NULL;
@@ -23,11 +25,11 @@ TreeNode* newNode(int value)
 
 void add_child(TreeNode* parent, TreeNode* node)
 {
-    if (parent->first_child == NULL) {
+    if (parent->first_child == NULL) { // If there are no child nodes
         parent->first_child = node;
     }
     else {
-        TreeNode* last_sibling = parent->first_child;
+        TreeNode* last_sibling = parent->first_child; // Previous adjacent node
         while (last_sibling->next_sibling != NULL) {
             last_sibling = last_sibling->next_sibling;
         }
@@ -56,10 +58,10 @@ TreeNode* get_parent(TreeNode* node)
 
 TreeNode* get_child(TreeNode* parent, int number)
 {
-    if (parent == NULL) {
+    if (parent == NULL) { // If there is no parent node
         return NULL;
     }
-    TreeNode* child = parent->first_child;
+    TreeNode* child = parent->first_child; // First child node
     for (int i = 1; i < number; i++) {
         if (child == NULL) {
             break;
@@ -102,8 +104,8 @@ TreeNode** get_real_ref(Tree* tree, TreeNode* node)
     if (node == get_root(tree)) {
         return &tree->root;;
     }
-
-    TreeNode* parent = get_parent(node);
+    TreeNode* parent = get_parent(node); // Parent node
+    // Initial pointer to the first child node
     TreeNode** p_node = &(parent->first_child);
     while ((*p_node) != NULL) {
         if (*p_node == node) {
@@ -116,30 +118,37 @@ TreeNode** get_real_ref(Tree* tree, TreeNode* node)
 
 void delete_tree_from(Tree* tree, TreeNode** node, TreeNode* initial_node)
 {
-    if ((*node)->first_child != NULL) {
+    // If there is a child node
+    if ((*node)->first_child != NULL) { 
         delete_tree_from(tree, &((*node)->first_child), initial_node);
     }
-    if ((*node)->next_sibling != NULL && (*node) != initial_node) {
+    // If there is a sibling node (excluding the initial node)
+    if ((*node)->next_sibling != NULL && (*node) != initial_node) { 
         delete_tree_from(tree, &((*node)->next_sibling), initial_node);
     }
+    // If there are no child nodes (for the initial node)
     if ((*node) == initial_node && (*node)->first_child == NULL) {
+        // Remember the sibling nodes
         TreeNode* prev_sibling = (*node)->prev_sibling;
         TreeNode* next_sibling = (*node)->next_sibling;
-        node = get_real_ref(tree, *node);
-        if (get_parent(*node) != NULL) (*node)->parent->child_count--;
+        node = get_real_ref(tree, *node); // Get the initial pointer to the node
+        // Decrease the number of child nodes by 1
+        if (get_parent(*node) != NULL) (*node)->parent->child_count--; 
+        // If there is a previous sibling node
         if (prev_sibling != NULL) {
             (prev_sibling->next_sibling) = next_sibling;
             if (next_sibling != NULL) {
                 next_sibling->prev_sibling = prev_sibling;
             }
         }
-        free(initial_node);
-        *node = NULL; // !
+        free(initial_node); // Free previously allocated memory for the node
+        *node = NULL;
         initial_node = NULL;
     }
+    // If there are no child nodes and sibling nodes (excluding the initial node)
     else if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
         (*node)->parent->child_count--;
-        free(*node);
+        free(*node); // Free previously allocated memory for the node
         *node = NULL;
     }
     return;
@@ -147,9 +156,9 @@ void delete_tree_from(Tree* tree, TreeNode** node, TreeNode* initial_node)
 
 void free_tree(Tree* tree)
 {
-    TreeNode** p_root = &(tree->root);
-    delete_tree_from(tree, p_root, *p_root);
-    free(tree);
+    TreeNode** p_root = &(tree->root); // Initial reference to the root node
+    delete_tree_from(tree, p_root, *p_root); // Delete from the root
+    free(tree); // Free memory allocated for the tree structure
     tree = NULL;
     return;
 }
@@ -158,7 +167,6 @@ void print_tree(TreeNode* root, int indent) {
     if (root == NULL) {
         return;
     }
-
     for (int i = 0; i < indent; i++) {
         if (i == indent - 1) {
             printf(" |-");
@@ -167,11 +175,11 @@ void print_tree(TreeNode* root, int indent) {
             printf("   ");
         }
     }
-    printf("{%d}\n", root->value);
+    printf("{%d}\n", root->value); // Print node value
 
     TreeNode* child = root->first_child;
     while (child != NULL) {
-        print_tree(child, indent + 1);
+        print_tree(child, indent + 1); // Recursion
         child = child->next_sibling;
     }
     return;
@@ -183,8 +191,8 @@ void min_dfs(TreeNode* node, int len, int* min_len, TreeNode** least_node)
     TreeNode* first_sibling = get_next_sibling(node, 1);
     if (first_cihld == NULL) {
         if (*min_len > len) {
-            *min_len = len;
-            *least_node = node;
+            *min_len = len; // Change the value of the variable via pointer
+            *least_node = node; // Change the node via double pointer
         }
     }
     if (first_cihld != NULL) {
