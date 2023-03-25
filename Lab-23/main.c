@@ -18,7 +18,7 @@ void deleting_root_ui(Tree* tree)
 {
     printf("Are you sure you want to delete root node? [y/n]\n");
     char option;
-    scanf_s(" %c", &option);
+    scanf(" %c", &option);
 
     switch (option) {
     case 'y':
@@ -67,12 +67,12 @@ TreeNode* get_node_from_path(Tree* tree, char* path)
 void read_value(int* value)
 {
     // Remember the return value of scanf
-    int input_res = scanf_s("%d", value);
+    int input_res = scanf("%d", value);
     while (input_res < 1) { // If a non-number was entered
         printf("Invalid value. Try again: ");
         int c;
         while ((c = getchar()) != '\n' && c != EOF) {}; // Clear input buffer
-        input_res = scanf_s("%d", value);
+        input_res = scanf("%d", value);
     }
     return;
 }
@@ -82,7 +82,7 @@ void tree_builder_ui(Tree* tree)
 {
     if (tree == NULL) { // If there is no tree
         printf("Creating a new tree... Enter root value: ");
-        int root_v; scanf_s("%d", &root_v);
+        int root_v; scanf("%d", &root_v);
         tree = createTree(root_v);
     }
     // Print the menu of options for the user
@@ -94,7 +94,7 @@ void tree_builder_ui(Tree* tree)
         [5] Delete tree\n \
         [q] Quit\n");
     char option;
-    scanf_s(" %c", &option);
+    scanf(" %c", &option);
     // Call the function to handle selected option
     option_selector(option, tree);
 }
