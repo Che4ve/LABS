@@ -47,6 +47,6 @@ void free_tree(Tree* tree);
 
 void print_tree(TreeNode* root, int indent);
 
-int min_dfs(TreeNode* node, int len, int min_len);
+void min_dfs(TreeNode* node, int len, int* min_len, TreeNode** least_node);
 
 #endif
