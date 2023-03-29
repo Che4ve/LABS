@@ -31,6 +31,14 @@ QueueNode* newNode(int value) // Конструктор узла
     return new_node;
 }
 
+int get_size(MyQueue* queue)
+{
+    if (queue == NULL) {
+        return 0;
+    }
+    return queue->size;
+}
+
 void free_queue(MyQueue* queue) // Освобождение памяти, занимаемой очередью
 {
     QueueNode* current_node = queue->front;
@@ -43,12 +51,14 @@ void free_queue(MyQueue* queue) // Освобождение памяти, зан
         current_node = current_node->next_node;
         free(temp_ptr); // Удаление по временной ссылке
     }
+    free(queue);
+    queue = NULL;
     return;
 }
 
 void push_back(MyQueue* queue, QueueNode* node) // Добавление элемента в конец
 {
-    if (node == NULL) { // Если узел не имеет смысла
+    if (node == NULL || queue == NULL) { // Если узел не имеет смысла
         return;
     }
     if (queue->back == NULL) { // Если очередь ещё пуста
@@ -109,13 +119,13 @@ MyQueue* copy_queue(MyQueue* queue)
 
 void print_queue(MyQueue* queue) // Вывод очереди
 {
+    printf("====== ");
     QueueNode* current_node = queue->front;
-
     for (int i = 0; i < queue->size; i++) {
         if (current_node->next_node == NULL) {
-            printf("[%d], size: %d\n", current_node->value, queue->size);
+            printf("{%d} ====== Size: %d\n", current_node->value, queue->size);
         } else {
-            printf("[%d]-", current_node->value);
+            printf("{%d} ", current_node->value);
         }
         current_node = current_node->next_node;
     }
@@ -150,7 +160,6 @@ MyQueue* quick_sort(MyQueue* queue) // Быстрая сортировка Хо�
     // Освобождаем выделенную память
     free_queue(left_q);
     free_queue(right_q);
-    //free(current_value);
 
     return queue;
 }
