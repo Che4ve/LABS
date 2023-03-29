@@ -66,4 +66,6 @@ void print_tree(TreeNode* root, int indent);
 // Search for the tree leaf with the minimum depth
 void min_dfs(TreeNode* node, int len, int* min_len, TreeNode** least_node);
 
+TreeNode* dfs(TreeNode* node, int value);
+
 #endif
