@@ -8,9 +8,11 @@
 #define MAX_STR_LEN 100
 #define MAX_NODES 250
 
+// Global variables: array of current nodes and its size
 TreeNode** current_nodes;
 int array_size = 0;
 
+// Binary search in the array of nodes
 TreeNode* bin_search(int value, int* index)
 {
     int left_b = 0, right_b = array_size - 1;
@@ -18,7 +20,9 @@ TreeNode* bin_search(int value, int* index)
     TreeNode* current_node;
     int current_v;
     while (left_b <= right_b) {
+        // Find middle of the search base
         pivot = left_b + (right_b - left_b) / 2;
+        // Find properties of the node in the middle
         current_node = current_nodes[pivot];
         current_v = get_value(current_node);
         if (current_v > value) {
@@ -37,6 +41,7 @@ TreeNode* bin_search(int value, int* index)
     return NULL;
 }
 
+// Insertion function
 void insert_to_array(TreeNode* node)
 {
     if (array_size == 0) {
@@ -45,10 +50,10 @@ void insert_to_array(TreeNode* node)
         return;
     }
     current_nodes[array_size] = node;
-    for (int i = array_size; i > 0; i--) {
+    for (int i = array_size; i > 0; i--) { 
         int right_v = get_value(current_nodes[i]);
         int left_v = get_value(current_nodes[i - 1]);
-        if (left_v <= right_v) {
+        if (left_v <= right_v) { // Bubble sort
             current_nodes[i] = node;
             array_size++;
             return;
@@ -61,6 +66,7 @@ void insert_to_array(TreeNode* node)
     }
 }
 
+// Filling array with NULL pointers
 void clear_array()
 {
     free(current_nodes);
@@ -69,6 +75,7 @@ void clear_array()
     return;
 }
 
+// Rebuild array after nodes removal (based on DFS)
 void rebuild_array(TreeNode* node)
 {
     if (node == NULL) {
@@ -84,34 +91,6 @@ void rebuild_array(TreeNode* node)
         rebuild_array(next_sibling);
     }
     return;
-}
-
-// Interface function prototype for tree constructor1
-void tree_builder_ui(Tree* tree);
-
-// Option selection function prototype
-void option_handler(char option, Tree* tree);
-
-// Tree deletion interface
-void deleting_root_ui(Tree* tree)
-{
-    printf("Are you sure you want to delete root node? [y/n]\n");
-    char option;
-    scanf_s(" %c", &option);
-
-    switch (option) {
-    case 'y':
-        free_tree(tree);
-        tree_builder_ui(NULL);
-        break;
-    case 'n':
-        tree_builder_ui(tree);
-        break;
-    default:
-        printf("invalid option.\n");
-        tree_builder_ui(tree);
-        break;
-    }
 }
 
 TreeNode* get_node_by_value(int value)
@@ -152,6 +131,34 @@ TreeNode* get_node_from_path(Tree* tree, char* path)
         cursor = endptr;
     }
     return parent;
+}
+
+// Interface function prototype for tree constructor1
+void tree_builder_ui(Tree* tree);
+
+// Option selection function prototype
+void option_handler(char option, Tree* tree);
+
+// Tree deletion interface
+void deleting_root_ui(Tree* tree)
+{
+    printf("Are you sure you want to delete root node? [y/n]\n");
+    char option;
+    scanf_s(" %c", &option);
+
+    switch (option) {
+    case 'y':
+        free_tree(tree);
+        tree_builder_ui(NULL);
+        break;
+    case 'n':
+        tree_builder_ui(tree);
+        break;
+    default:
+        printf("invalid option.\n");
+        tree_builder_ui(tree);
+        break;
+    }
 }
 
 // Read an integer value from the input stream
