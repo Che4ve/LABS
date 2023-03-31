@@ -8,11 +8,9 @@
 #define MAX_STR_LEN 100
 #define MAX_NODES 250
 
-// Global variables: array of current nodes and its size
 TreeNode** current_nodes;
 int array_size = 0;
 
-// Binary search in the array of nodes
 TreeNode* bin_search(int value, int* index)
 {
     int left_b = 0, right_b = array_size - 1;
@@ -20,9 +18,7 @@ TreeNode* bin_search(int value, int* index)
     TreeNode* current_node;
     int current_v;
     while (left_b <= right_b) {
-        // Find middle of the search base
         pivot = left_b + (right_b - left_b) / 2;
-        // Find properties of the node in the middle
         current_node = current_nodes[pivot];
         current_v = get_value(current_node);
         if (current_v > value) {
@@ -41,7 +37,6 @@ TreeNode* bin_search(int value, int* index)
     return NULL;
 }
 
-// Insertion function
 void insert_to_array(TreeNode* node)
 {
     if (array_size == 0) {
@@ -50,10 +45,10 @@ void insert_to_array(TreeNode* node)
         return;
     }
     current_nodes[array_size] = node;
-    for (int i = array_size; i > 0; i--) { 
+    for (int i = array_size; i > 0; i--) {
         int right_v = get_value(current_nodes[i]);
         int left_v = get_value(current_nodes[i - 1]);
-        if (left_v <= right_v) { // Bubble sort
+        if (left_v <= right_v) {
             current_nodes[i] = node;
             array_size++;
             return;
@@ -64,9 +59,10 @@ void insert_to_array(TreeNode* node)
             current_nodes[i] = tmp;
         }
     }
+    array_size++;
+    return;
 }
 
-// Filling array with NULL pointers
 void clear_array()
 {
     free(current_nodes);
@@ -75,7 +71,6 @@ void clear_array()
     return;
 }
 
-// Rebuild array after nodes removal (based on DFS)
 void rebuild_array(TreeNode* node)
 {
     if (node == NULL) {
@@ -91,6 +86,34 @@ void rebuild_array(TreeNode* node)
         rebuild_array(next_sibling);
     }
     return;
+}
+
+// Interface function prototype for tree constructor1
+void tree_builder_ui(Tree* tree);
+
+// Option selection function prototype
+void option_handler(char option, Tree* tree);
+
+// Tree deletion interface
+void deleting_root_ui(Tree* tree)
+{
+    printf("Are you sure you want to delete root node? [y/n]\n");
+    char option;
+    scanf(" %c", &option);
+
+    switch (option) {
+    case 'y':
+        free_tree(tree);
+        tree_builder_ui(NULL);
+        break;
+    case 'n':
+        tree_builder_ui(tree);
+        break;
+    default:
+        printf("invalid option.\n");
+        tree_builder_ui(tree);
+        break;
+    }
 }
 
 TreeNode* get_node_by_value(int value)
@@ -133,44 +156,16 @@ TreeNode* get_node_from_path(Tree* tree, char* path)
     return parent;
 }
 
-// Interface function prototype for tree constructor1
-void tree_builder_ui(Tree* tree);
-
-// Option selection function prototype
-void option_handler(char option, Tree* tree);
-
-// Tree deletion interface
-void deleting_root_ui(Tree* tree)
-{
-    printf("Are you sure you want to delete root node? [y/n]\n");
-    char option;
-    scanf_s(" %c", &option);
-
-    switch (option) {
-    case 'y':
-        free_tree(tree);
-        tree_builder_ui(NULL);
-        break;
-    case 'n':
-        tree_builder_ui(tree);
-        break;
-    default:
-        printf("invalid option.\n");
-        tree_builder_ui(tree);
-        break;
-    }
-}
-
 // Read an integer value from the input stream
 void read_value(int* value)
 {
-    // Remember the return value of scanf_s
-    int input_res = scanf_s("%d", value);
+    // Remember the return value of scanf
+    int input_res = scanf("%d", value);
     while (input_res < 1) { // If a non-number was entered
         printf("Invalid value. Try again: ");
         int c;
         while ((c = getchar()) != '\n' && c != EOF) {}; // Clear input buffer
-        input_res = scanf_s("%d", value);
+        input_res = scanf("%d", value);
     }
     return;
 }
@@ -185,7 +180,6 @@ void tree_builder_ui(Tree* tree)
         read_value(&root_v);
         tree = createTree(root_v);
         insert_to_array(get_root(tree));
-        printf("Array size is: %d, last elem is: [%d]\n", array_size, current_nodes[array_size - 1]->value);
     }
     // Print the menu of options for the user
     printf("Choose the option:\n");
@@ -196,7 +190,7 @@ void tree_builder_ui(Tree* tree)
         [5] Delete tree\n \
         [q] Quit\n");
     char option;
-    scanf_s(" %c", &option);
+    scanf(" %c", &option);
     // Call the function to handle selected option
     option_handler(option, tree);
 }
@@ -235,7 +229,7 @@ void option_handler(char option, Tree* tree)
                 read_value(&parent_v);
                 read_value(&child_v);
                 parent = get_node_by_value(parent_v);
-                while (bin_search(child_v, NULL) != NULL && parent != NULL) {
+                while (bin_search(child_v, NULL) != NULL) {
                     printf("The new node must be unique. Try a different value: ");
                     read_value(&child_v);
                 }
@@ -323,6 +317,7 @@ void option_handler(char option, Tree* tree)
     }
     return;
 }
+
 
 int main() {
     //-------------------------------------------------------------//
