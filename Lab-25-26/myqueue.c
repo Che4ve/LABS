@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "myqueue.h"
 
 typedef struct _queue_node { // Структура узла очереди
@@ -43,6 +44,7 @@ void free_queue(MyQueue* queue) // Освобождение памяти, зан
 {
     QueueNode* current_node = queue->front;
     if (current_node == NULL) {
+        free(queue);
         return;
     }
     QueueNode* temp_ptr; // Временная ссылка на узел
@@ -52,7 +54,6 @@ void free_queue(MyQueue* queue) // Освобождение памяти, зан
         free(temp_ptr); // Удаление по временной ссылке
     }
     free(queue);
-    queue = NULL;
     return;
 }
 
@@ -86,8 +87,7 @@ int* pop_front(MyQueue* queue) // Извлекаем узел из начала 
     front_node = NULL;
     queue->size--;
 
-    int* result = malloc(sizeof(int)); // Резерв. память под результат (т.к. int*)
-    *result = value;
+    int* result = &value;
     return result;
 }
 
@@ -101,7 +101,8 @@ MyQueue* join(MyQueue* q1, MyQueue* q2) // Конкатенация двух о�
     while ( ( current_value = pop_front(q2) ) != NULL) {
         push_back(result, newNode(*current_value));
     }
-    
+    free_queue(q1);
+    free_queue(q2);
     return result;
 }
 
@@ -135,6 +136,7 @@ void print_queue(MyQueue* queue) // Вывод очереди
 MyQueue* quick_sort(MyQueue* queue) // Быстрая сортировка Хоара
 {
     if (queue->size <= 1) { // Условие выхода из рекурсии
+
         return queue;
     }
 
@@ -154,12 +156,11 @@ MyQueue* quick_sort(MyQueue* queue) // Быстрая сортировка Хо�
     // Добавляем опорный узел в левую очередь
     push_back(left_q, newNode(pivot));
 
+    // Освобождаем обработанную очередь
+    free_queue(queue);
+
     // Рекурсия
     queue = join(quick_sort(left_q), quick_sort(right_q));
-
-    // Освобождаем выделенную память
-    free_queue(left_q);
-    free_queue(right_q);
 
     return queue;
 }

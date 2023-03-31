@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <string.h>
 #include "myqueue.h" // Подключаем собственный заголовочный файл
 
 #define MAX_STR_LEN 250
@@ -32,8 +32,7 @@ MyQueue* scan_queue(MyQueue* queue, char* nodes)
         }
         // If the number couldn't be inputted or the child node number is incorrect
         if (endptr == cursor) {
-            printf("Incorrect input.\n");
-            printf("Please, try again from the place you've made a mistake: ");
+            printf("incorrect input. Please, try again from the place you've made a mistake: ");
             return NULL;
         }
         // Update cursor for reading the next number
@@ -61,7 +60,7 @@ int main() {
         }
 
         MyQueue* merged_queue = createQueue(); // Результирующая очередь
-        MyQueue* new_queue; // Следующая очередь по списку
+        MyQueue* new_queue = NULL; // Следующая очередь по списку
 
         for (int i = 0; i < q_num; i++) {
             new_queue = createQueue();
@@ -100,6 +99,8 @@ int main() {
         else {
             printf("Nothing to work with...\n");
         }
+
+        // Освобождаем память
         free_queue(merged_queue);
 
         printf("Would you like to try again? [y/n]\n");
