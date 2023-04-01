@@ -1,0 +1,4 @@
+Surname,ProcessorsNum,CPUs,Memory,GPU,GMemory,HDDNum,HDDs,DevicesNum,OS
+Smith,2,Intel Core i5|AMD Ryzen 7 3700X,16GB,RTX 2060,8GB,2,1 TB|2TB,3,Windows 10
+Jones,
+Williams,
