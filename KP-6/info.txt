@@ -1,4 +1,12 @@
-Surname,ProcessorsNum,CPUs,Memory,GPU,GMemory,HDDNum,HDDs,DevicesNum,OS
-Smith,2,Intel Core i5|AMD Ryzen 7 3700X,16GB,RTX 2060,8GB,2,1 TB|2TB,3,Windows 10
-Jones,
-Williams,
+Surname,ProcessorsNumber,CPUs,Memory,NvidiaGPU,GraphicalMemory,HDDsNumber,HDDs,DevicesNumber,OS
+Smith,2,Intel Core i5|AMD Ryzen 7,16GB,RTX 2060,6GB,2,1TB|2TB,3,Windows 10
+Jones,3,Intel Core i9|AMD Ryzen 9|AMD Ryzen 5,32GB,RTX 3080,12GB,2,2TB|4TB,5,Windows 11
+Williams,2,Intel Core i7|AMD Ryzen 5,24GB,GTX 1660,4GB,1,1TB,3,Windows 99
+Gonzalez,1,Intel Core i3,8GB,GTX 1650,4GB,1,1TB,2,Windows 10
+Smith,1,AMD Ryzen 7,8GB,GTX 1050,3GB,1,2TB,4,Ubuntu Debian
+Jones,1,Intel Core i5,16GB,RTX 2070 Super,12GB,1,4TB,4,Windows 8
+Wayne,2,AMD Ryzen 9|Intel Core i9,64GB,RTX 4090,24GB,3,1TB|2TB|5TB,9,Windows 11
+Anderson,1,Intel Core i7,16GB,GTX 1070,8GB,2,1TB|1TB,3,Windows 10
+Chen,1,Intel Core i7,16GB,GTX 1080,8GB,1,2TB,4,Ubuntu 20.04
+Simpson,2,Intel Core i7|AMD Ryzen 9,16GB,GTX 1660,4GB,1,1TB,3,Windows 10
+Gonzalez,1,AMD Ryzen 5,8GB,GTX 1050,2GB,1,500GB,2,Windows 10

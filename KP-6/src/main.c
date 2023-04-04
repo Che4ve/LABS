@@ -1,109 +1,68 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <getopt.h>
 #include "../headers/studentpc.h"
 #include "../headers/dict.h"
 
-#define MAX_SIZE 250
+#define MAX_LEN 250 // Maximum length of a line in the file
 
-int main(int argc, char **argv)
+ int main(int argc, char **argv)
 {
-    char buffer[MAX_SIZE];
-    char properties[MAX_SIZE];
-
-    //StudentPC** pc_dict = (StudentPC**)malloc(sizeof(StudentPC*) * TABLE_SIZE);
-
-    FILE* f1 = fopen("info.txt", "r");
-
-    //fread(&buffer, sizeof(buffer), 1, f1);
-    //printf("%s\n", buffer);
-
-    fgets(properties, 255, f1);
-
+    // Buffer to store a single line from the file
+    char buffer[MAX_LEN];
+     // Buffer to store the properties from the first line of the file
+    char properties[MAX_LEN];
+     // Create a hash table to store the student PCs
+    HashTable* pc_table = createTable(TABLE_SIZE);
+     // Open the file for reading
+    FILE* f1 = fopen("S:/Git/labs/KP-6/info.txt", "r");
+    if (f1 == NULL) {
+        perror("Failed to open file");
+        return 1;
+    }
+     // Read the first line of the file
+    fgets(properties, MAX_LEN, f1);
+     // Print the categories that will be compared
     char* token = strtok(properties, ",");
-
     printf("Comparing categories:\n");
     int categories_num = 0;
-    token = strtok(NULL, ","); // Surname
+    token = strtok(NULL, ",");
     while (token != NULL) {
         printf("\t*) %s\n", token);
         token = strtok(NULL, ",");
         categories_num++;
     }
-    //printf("%d\n", categories_num);
-    while (fgets(buffer, 255, f1) != NULL) {
+
+    char considered_stud[TABLE_SIZE][MAX_SPEC_SIZE];
+    int stud_count = 0;
+
+     // Read the rest of the lines and insert them into the hash table
+    while (fgets(buffer, MAX_LEN, f1) != NULL) {
         StudentPC* new_pc = newPC();
-        char* stud_token = strtok(buffer, ",");
-        for (int i = 0; i < categories_num + 1; i++) {
-            if (stud_token == NULL) {
-                break;
-            }
-            switch (i) {
-            case 0: // Name
-                new_pc->name = stud_token;
-                printf("--%s--\n", stud_token);
-                break;
-            case 1: // CPU number
-            {
-                long value;
-                stud_token = strtok(NULL, ",");
-                value = strtol(stud_token, NULL, 10);
-                new_pc->cpu_num = value;
-                printf("CPU number: %s\n", stud_token);
-                break;
-            }
-            case 2: // CPUs
-                stud_token = strtok(NULL, ",");
-                new_pc->cpus = stud_token;
-                printf("CPUs: %s\n", stud_token);
-                break;
-            case 3: // RAM
-            {
-                long value;
-                stud_token = strtok(NULL, ",");
-                value = strtol(stud_token, NULL, 10);
-                new_pc->ram = value;
-                printf("RAM: %ld\n", value);
-                break;
-            }
-            case 4: // GPU
-                stud_token = strtok(NULL, ",");
-                new_pc->gpu = stud_token;
-                printf("GPU: %s\n", stud_token);
-                break;
-            case 5: // GPU memory
-            {
-                long value;
-                stud_token = strtok(NULL, ",");
-                value = strtol(stud_token, NULL, 10);
-                new_pc->gmem = value;
-                break;
-            }
-            case 6: // HDD number
-            {
-                long value;
-                stud_token = strtok(NULL, ",");
-                value = strtol(stud_token, NULL, 10);
-                new_pc->hdd_num = value;
-                break;
-            }
-            case 7: // HDDs
-                
-                break;
-            case 8: // Devices number
+        csv_read(new_pc, buffer);
+        //ht_print_specs(new_pc->specs);
+        //printf("\n");
 
-                break;
-            case 9: // Operating system
-
-                break;
-            }
+        char* name = get_name(new_pc);
+        if (ht_find(pc_table, name) != NULL) {
+            strncpy(considered_stud[stud_count], name, MAX_SPEC_SIZE);
+            stud_count++;
         }
-        //printf("%s\n", buffer);
+
+        ht_insert(pc_table, name, new_pc);
     }
+     // Print the contents of the hash table
+    ht_print(pc_table);
+
+    for (int i = 0; i < stud_count; i++) {
+        printf("%s, ", considered_stud[i]);
+    }
+    printf("\n");
+
+    //COEFFS
 
 
-
+     // Close the file
     fclose(f1);
-    return 0;
+     return 0;
 }

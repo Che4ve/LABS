@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c17 -Wall -Werror
+CFLAGS = -std=c17
 FILE_OUT = kp6.out
 SOURCES = src/main.c src/studentpc.c src/dict.c
 
