@@ -74,10 +74,10 @@ void push_back(MyQueue* queue, QueueNode* node) // Добавление элем
     return;
 }
 
-int* pop_front(MyQueue* queue) // Извлекаем узел из начала очереди
+int pop_front(MyQueue* queue) // Извлекаем узел из начала очереди
 {
     if (queue->front == NULL) { // Если нет элементов в очереди
-        return NULL;
+        return INT_MIN;
     }
     QueueNode* front_node = queue->front;
     int value = front_node->value; // Значение узла (лок. переменная)
@@ -87,19 +87,19 @@ int* pop_front(MyQueue* queue) // Извлекаем узел из начала 
     front_node = NULL;
     queue->size--;
 
-    int* result = &value;
-    return result;
+    return value;
 }
 
 MyQueue* join(MyQueue* q1, MyQueue* q2) // Конкатенация двух очередей
 {
     MyQueue* result = createQueue(); // Создаем результирующую очередь
-    int* current_value;
-    while ( ( current_value = pop_front(q1) ) != NULL) {
-        push_back(result, newNode(*current_value));
+    while (get_size(q1) > 0) {
+        int current_value = pop_front(q1);
+        push_back(result, newNode(current_value));
     }
-    while ( ( current_value = pop_front(q2) ) != NULL) {
-        push_back(result, newNode(*current_value));
+    while (get_size(q2) > 0) {
+        int current_value = pop_front(q2);
+        push_back(result, newNode(current_value));
     }
     free_queue(q1);
     free_queue(q2);
@@ -111,7 +111,7 @@ MyQueue* copy_queue(MyQueue* queue)
     MyQueue* result = createQueue();
     int initial_size = queue->size;
     for ( int i = 0; i < initial_size; i++ ) {
-        int copied_value = *pop_front(queue);
+        int copied_value = pop_front(queue);
         push_back(queue, newNode(copied_value));
         push_back(result, newNode(copied_value));
     }
@@ -122,8 +122,8 @@ void print_queue(MyQueue* queue) // Вывод очереди
 {
     printf("====== ");
     QueueNode* current_node = queue->front;
-    for (int i = 0; i < queue->size; i++) {
-        if (current_node->next_node == NULL) {
+    for (int i = 0; i < get_size(queue); i++) {
+        if (i == get_size(queue) - 1) {
             printf("{%d} ====== Size: %d\n", current_node->value, queue->size);
         } else {
             printf("{%d} ", current_node->value);
@@ -144,13 +144,13 @@ MyQueue* quick_sort(MyQueue* queue) // Быстрая сортировка Хо�
     MyQueue* right_q = createQueue(); // Правая очередь
 
     // Опорный узел - первый узел входной очереди
-    int pivot = *pop_front(queue); // Значение опорного узла
-    int* current_value; // Декларация ссылки на значение иного узла
-    while ( ( current_value = pop_front(queue) ) != NULL) {
-        if (*current_value < pivot) {
-            push_back(left_q, newNode(*current_value));
+    int pivot = pop_front(queue); // Значение опорного узла
+    while ( get_size(queue) > 0) {
+        int current_value = pop_front(queue);
+        if (current_value < pivot) {
+            push_back(left_q, newNode(current_value));
         } else {
-            push_back(right_q, newNode(*current_value));
+            push_back(right_q, newNode(current_value));
         }
     }
     // Добавляем опорный узел в левую очередь

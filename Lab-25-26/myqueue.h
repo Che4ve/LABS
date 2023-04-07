@@ -19,7 +19,7 @@ void free_queue(MyQueue* queue);
 
 void push_back(MyQueue* queue, QueueNode* node);
 
-int* pop_front(MyQueue* queue);
+int pop_front(MyQueue* queue);
 
 MyQueue* join(MyQueue* q1, MyQueue* q2);
 
