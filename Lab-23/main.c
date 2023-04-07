@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "mytree.h"
+#include "S:/Git/labs/Lab-23/mytree.h"
 
 #define INF 1e9
 #define MAX_STR_LEN 100
@@ -128,34 +128,6 @@ TreeNode* get_node_by_value(int value)
     return result;
 }
 
-// Get a node by the given path as a string
-TreeNode* get_node_from_path(Tree* tree, char* path)
-{
-    TreeNode* root = get_root(tree);
-    TreeNode* parent = root;
-    char* cursor = path; // Pointer to the beginning of the string (cursor)
-    while (cursor < path + strlen(path) - 1) { // Until the cursor reaches the end of the string
-        char* endptr; // Pointer to the place after the number
-        long child_num = strtol(cursor, &endptr, 10); // Get the number from the string
-        // Skip empty spaces
-        while (*endptr == ' ') {
-            endptr++;
-        }
-        // If the number couldn't be inputted or the child node number is incorrect
-        if (child_num > get_child_count(parent) || endptr == cursor) {
-            printf("incorrect path. Please, try again: ");
-            return NULL;
-        }
-        // Special case for the root node (allows writing 0 situationally)
-        if (child_num != 0) {
-            parent = get_child(parent, child_num);
-        }
-        // Update cursor for reading the next number
-        cursor = endptr;
-    }
-    return parent;
-}
-
 // Read an integer value from the input stream
 void read_value(int* value)
 {
@@ -212,8 +184,7 @@ void option_handler(char option, Tree* tree)
                 printf("The new node must be unique. Try a different value: ");
                 read_value(&child_v);
             }
-            TreeNode* new_node = newNode(child_v);
-            add_child(root, new_node);
+            TreeNode* new_node = add_child(root, child_v);
             insert_to_array(new_node);
             printf("Array size is: %d, last elem is: [%d]\n", array_size, current_nodes[array_size - 1]->value);
         }
@@ -234,8 +205,7 @@ void option_handler(char option, Tree* tree)
                     read_value(&child_v);
                 }
             }
-            TreeNode* new_node = newNode(child_v);
-            add_child(parent, new_node);
+            TreeNode* new_node = add_child(parent, child_v);
             insert_to_array(new_node);
         }
         // Print the updated tree and return to the main menu
@@ -252,24 +222,19 @@ void option_handler(char option, Tree* tree)
             deleting_root_ui(tree);
             break;
         }
-        printf("Enter path to a child you want to delete (recursively).\n");
-        printf("Use child numeration.\n");
-        printf("For example, the path for\n(root) -> (third child) -> (first child) is '0 3 1'\n");
-        printf("Enter path to the parent node: ");
+        printf("Enter node you want to delete: ");
+        int child_v;
+        read_value(&child_v);
         TreeNode* node;
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF) {}; // Flush input buffer
-        do {
-            char path[MAX_STR_LEN];
-            fgets(path, MAX_STR_LEN, stdin); // Read the string from stdin
-            node = get_node_from_path(tree, path);
-        } while (node == NULL);
+        while ((node = bin_search(child_v, NULL)) == NULL) {
+            printf("This node doesn't exist. Try again: ");
+            read_value(&child_v);
+        }
         if (node == get_root(tree)) {
             deleting_root_ui(tree);
             break;
         }
-
-        delete_tree_from(tree, &node, node);
+        delete_tree_from(tree, node, node);
         clear_array();
         rebuild_array(root);
         // Print the updated tree and return to the main menu
@@ -307,6 +272,7 @@ void option_handler(char option, Tree* tree)
     case 'q':
         // Free the tree
         free_tree(tree);
+        free(current_nodes);
         return;
         break;
         // ELSE

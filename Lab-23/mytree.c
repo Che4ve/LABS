@@ -1,4 +1,4 @@
-﻿#include "mytree.h"
+﻿#include "S:/Git/labs/Lab-23/mytree.h"
 
 // create a new tree with a single node as the root with the given value
 Tree* createTree(int root_value)
@@ -26,8 +26,9 @@ TreeNode* newNode(int value)
 }
 
 // add a new child node to the parent node
-void add_child(TreeNode* parent, TreeNode* node)
+TreeNode* add_child(TreeNode* parent, int value)
 {
+    TreeNode* node = newNode(value);
     // if the parent node does not have any children, set the new node as its first child
     if (parent->first_child == NULL) {
         parent->first_child = node;
@@ -44,7 +45,7 @@ void add_child(TreeNode* parent, TreeNode* node)
     }
     parent->child_count++;
     node->parent = parent;
-    return;
+    return node;
 }
 
 int get_value(TreeNode* node)
@@ -98,7 +99,6 @@ TreeNode* get_next_sibling(TreeNode* node, int number)
     return sibling;
 }
 
-
 TreeNode* get_prev_sibling(TreeNode* node)
 {
     return node->prev_sibling;
@@ -117,7 +117,7 @@ TreeNode** get_real_ref(Tree* tree, TreeNode* node)
         return NULL;
     }
     if (node == get_root(tree)) {
-        return &tree->root;;
+        return &tree->root;
     }
 
     TreeNode* parent = get_parent(node);
@@ -131,39 +131,38 @@ TreeNode** get_real_ref(Tree* tree, TreeNode* node)
     return NULL;
 }
 // Recursively deletes a tree starting from a given node
-void delete_tree_from(Tree* tree, TreeNode** node, TreeNode* initial_node)
+void delete_tree_from(Tree* tree, TreeNode* node, TreeNode* initial_node)
 {
-    if ((*node)->first_child != NULL) {
-        delete_tree_from(tree, &((*node)->first_child), initial_node);
+    if (node->first_child != NULL) {
+        delete_tree_from(tree, node->first_child, initial_node);
     }
-    if ((*node)->next_sibling != NULL && (*node) != initial_node) {
-        delete_tree_from(tree, &((*node)->next_sibling), initial_node);
+    if (node->next_sibling != NULL && node != initial_node) {
+        delete_tree_from(tree, node->next_sibling, initial_node);
     }
-    if ((*node) == initial_node && (*node)->first_child == NULL) {
+    if (node == initial_node && node->first_child == NULL) {
         // Get siblings
-        TreeNode* prev_sibling = (*node)->prev_sibling;
-        TreeNode* next_sibling = (*node)->next_sibling;
-        // Get initial reference to the node
-        node = get_real_ref(tree, *node);
-        if (get_parent(*node) != NULL) (*node)->parent->child_count--;
+        TreeNode* prev_sibling = node->prev_sibling;
+        TreeNode* next_sibling = node->next_sibling;
+        TreeNode* parent = node->parent;
+        if (parent != NULL) parent->child_count--;
+        if (parent != NULL && parent->first_child == node) {
+            parent->first_child = next_sibling;
+        }
+        free(initial_node);
+        initial_node = NULL;
+        node = NULL;
         if (prev_sibling != NULL) {
             (prev_sibling->next_sibling) = next_sibling;
         }
         if (next_sibling != NULL) {
-            TreeNode* parent = (*node)->parent;
             next_sibling->prev_sibling = prev_sibling;
-            parent->first_child = next_sibling;
         }
-        else {
-            *node = NULL;
-        }
-        free(initial_node);
-        initial_node = NULL;
     }
-    else if ((*node)->first_child == NULL && (*node)->next_sibling == NULL) {
-        (*node)->parent->child_count--;
-        free(*node);
-        *node = NULL;
+    else if (node->first_child == NULL && node->next_sibling == NULL) {
+        node->parent->child_count--;
+        TreeNode** node_p = get_real_ref(tree, node);
+        free(node);
+        *node_p = NULL;
     }
     return;
 }
@@ -171,8 +170,8 @@ void delete_tree_from(Tree* tree, TreeNode** node, TreeNode* initial_node)
 // Delete a whole tree
 void free_tree(Tree* tree)
 {
-    TreeNode** p_root = &(tree->root);
-    delete_tree_from(tree, p_root, *p_root);
+    TreeNode* root = tree->root;
+    delete_tree_from(tree, root, root);
     free(tree);
     tree = NULL;
     return;

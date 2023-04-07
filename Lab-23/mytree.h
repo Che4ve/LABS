@@ -28,7 +28,7 @@ Tree* createTree(int root_value);
 TreeNode* newNode(int value);
 
 // Add a child node
-void add_child(TreeNode* parent, TreeNode* node);
+TreeNode* add_child(TreeNode* parent, int value);
 
 // Get node value
 int get_value(TreeNode* node);
@@ -55,7 +55,7 @@ int get_child_count(TreeNode* node);
 TreeNode** get_real_ref(Tree* tree, TreeNode* node);
 
 // Delete part of the tree starting from the node
-void delete_tree_from(Tree* tree, TreeNode** node, TreeNode* initial_node);
+void delete_tree_from(Tree* tree, TreeNode* node, TreeNode* initial_node);
 
 // Delete the entire tree
 void free_tree(Tree* tree);
