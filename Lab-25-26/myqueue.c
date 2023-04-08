@@ -108,18 +108,6 @@ MyQueue* join(MyQueue* q1, MyQueue* q2) // Конкатенация двух о�
     return result;
 }
 
-MyQueue* copy_queue(MyQueue* queue)
-{   
-    MyQueue* result = createQueue();
-    int initial_size = queue->size;
-    for ( int i = 0; i < initial_size; i++ ) {
-        int copied_value = pop_front(queue);
-        push_back(queue, copied_value);
-        push_back(result, copied_value);
-    }
-    return result;
-}
-
 void print_queue(MyQueue* queue) // Вывод очереди
 {
     if (get_size(queue) == 0) {

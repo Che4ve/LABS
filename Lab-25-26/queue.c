@@ -38,7 +38,6 @@ int main() {
         printf("How many queues would you like to work with?\n");
         int q_num;
         read_value(&q_num);
-        MyQueue* q_array[3];
         int c;
         while ((c = getchar()) != '\n' && c != EOF) {}; // Clear input buffer
 
@@ -53,7 +52,6 @@ int main() {
             MyQueue* temp_q = merged_queue;
             printf("Working with the queue <%d>...", i + 1);
             MyQueue* new_queue = createQueue();
-            q_array[i] = new_queue;
             int choice;
             do {
                 creation_menu();
