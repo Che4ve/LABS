@@ -17,7 +17,7 @@ int get_size(MyQueue* queue);
 
 void free_queue(MyQueue* queue);
 
-void push_back(MyQueue* queue, QueueNode* node);
+void push_back(MyQueue* queue, int value);
 
 int pop_front(MyQueue* queue);
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <limits.h>
 #include "myqueue.h"
 
 typedef struct _queue_node { // Структура узла очереди
@@ -57,12 +58,13 @@ void free_queue(MyQueue* queue) // Освобождение памяти, зан
     return;
 }
 
-void push_back(MyQueue* queue, QueueNode* node) // Добавление элемента в конец
+void push_back(MyQueue* queue, int value) // Добавление элемента в конец
 {
+    QueueNode* node = newNode(value);
     if (node == NULL || queue == NULL) { // Если узел не имеет смысла
         return;
     }
-    if (queue->back == NULL) { // Если очередь ещё пуста
+    if (queue->front == NULL) { // Если очередь ещё пуста
         queue->back = queue->front = node;
         queue->size++;
         return;
@@ -95,11 +97,11 @@ MyQueue* join(MyQueue* q1, MyQueue* q2) // Конкатенация двух о�
     MyQueue* result = createQueue(); // Создаем результирующую очередь
     while (get_size(q1) > 0) {
         int current_value = pop_front(q1);
-        push_back(result, newNode(current_value));
+        push_back(result, current_value);
     }
     while (get_size(q2) > 0) {
         int current_value = pop_front(q2);
-        push_back(result, newNode(current_value));
+        push_back(result, current_value);
     }
     free_queue(q1);
     free_queue(q2);
@@ -112,19 +114,23 @@ MyQueue* copy_queue(MyQueue* queue)
     int initial_size = queue->size;
     for ( int i = 0; i < initial_size; i++ ) {
         int copied_value = pop_front(queue);
-        push_back(queue, newNode(copied_value));
-        push_back(result, newNode(copied_value));
+        push_back(queue, copied_value);
+        push_back(result, copied_value);
     }
     return result;
 }
 
 void print_queue(MyQueue* queue) // Вывод очереди
 {
+    if (get_size(queue) == 0) {
+        printf("<Empty queue>\n");
+        return;
+    }
     printf("====== ");
     QueueNode* current_node = queue->front;
     for (int i = 0; i < get_size(queue); i++) {
         if (i == get_size(queue) - 1) {
-            printf("{%d} ====== Size: %d\n", current_node->value, queue->size);
+            printf("{%d} ====== Size: %d\n", current_node->value, get_size(queue));
         } else {
             printf("{%d} ", current_node->value);
         }
@@ -148,13 +154,13 @@ MyQueue* quick_sort(MyQueue* queue) // Быстрая сортировка Хо�
     while ( get_size(queue) > 0) {
         int current_value = pop_front(queue);
         if (current_value < pivot) {
-            push_back(left_q, newNode(current_value));
+            push_back(left_q, current_value);
         } else {
-            push_back(right_q, newNode(current_value));
+            push_back(right_q, current_value);
         }
     }
     // Добавляем опорный узел в левую очередь
-    push_back(left_q, newNode(pivot));
+    push_back(left_q, pivot);
 
     // Освобождаем обработанную очередь
     free_queue(queue);

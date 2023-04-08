@@ -1,6 +1,6 @@
 CC = gcc
 DEGUGGER = gdb
-CFLAGS = -std=c17 -Wall -Werror
+CFLAGS = -std=c17 -Wall
 FILE_OUT = tree.out
 SOURCES = queue.c myqueue.c
 

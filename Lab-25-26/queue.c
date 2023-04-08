@@ -19,27 +19,14 @@ void read_value(int* value)
     return;
 }
 
-// Get a queue by a string with nodes values
-MyQueue* scan_queue(MyQueue* queue, char* nodes)
+void creation_menu()
 {
-    char* cursor = nodes; // Pointer to the beginning of the string (cursor)
-    while (cursor < nodes + strlen(nodes) - 1) { // Until the cursor reaches the end of the string
-        char* endptr; // Pointer to the place after the number
-        long value = strtol(cursor, &endptr, 10); // Get the number from the string
-        // Skip empty spaces
-        while (*endptr == ' ') {
-            endptr++;
-        }
-        // If the number couldn't be inputted or the child node number is incorrect
-        if (endptr == cursor) {
-            printf("incorrect input. Please, try again from the place you've made a mistake: ");
-            return NULL;
-        }
-        // Update cursor for reading the next number
-        push_back(queue, newNode(value));
-        cursor = endptr;
-    }
-    return queue;
+    printf("\n\t|== Action Menu ==|\n");
+    printf("\t1. Push element to queue\n");
+    printf("\t2. Pop back from queue\n");
+    printf("\t3. Sort with Hoare's Algorithm\n");
+    printf("\t4. Print queue\n");
+    printf("\t0. Finish\n");
 }
 
 int main() {
@@ -48,51 +35,83 @@ int main() {
 
     while (try_again) {
 
-        printf("How many queue structures would you like to merge?\n");
-        int q_num = -1;
+        printf("How many queues would you like to work with?\n");
+        int q_num;
         read_value(&q_num);
+        MyQueue* q_array[3];
         int c;
         while ((c = getchar()) != '\n' && c != EOF) {}; // Clear input buffer
 
         if (q_num <= 0) {
-            printf("You've chosen not to merge any queues\n");
+            printf("You've chosen not to work at all\n");
             return 0;
         }
 
         MyQueue* merged_queue = createQueue(); // Результирующая очередь
-        MyQueue* new_queue = NULL; // Следующая очередь по списку
-
+     
         for (int i = 0; i < q_num; i++) {
-            new_queue = createQueue();
             MyQueue* temp_q = merged_queue;
-            printf("Please, enter the <%d> queue (for example, '0 1 2 3'): ", i + 1);
-            MyQueue* result = NULL;
+            printf("Working with the queue <%d>...", i + 1);
+            MyQueue* new_queue = createQueue();
+            q_array[i] = new_queue;
+            int choice;
             do {
-                char nodes[MAX_STR_LEN];
-                fgets(nodes, MAX_STR_LEN, stdin); // Read the string from stdin
-                result = scan_queue(new_queue, nodes);
-            } while (result == NULL);
-            
-            if (get_size(new_queue) == 0) {
-                printf("That's an empty queue\n");
-            }
-            else {
-                printf("You've constructed a queue:\n");
-                print_queue(new_queue);
-            }
-            printf("\n");
+                creation_menu();
+                scanf("%d", &choice);
+                switch(choice) {
+                case 1:
+                    printf("Enter value of the new element: ");
+                    int value;
+                    read_value(&value);
+                    push_back(new_queue, value);
+                    printf("Now queue looks like this:\n");
+                    print_queue(new_queue);
+                    break;
 
+                case 2:
+                    if (get_size(new_queue) == 0) {
+                        printf("The queue is empty already.\n");
+                        break;
+                    }
+                    pop_front(new_queue);
+                    printf("Now queue looks like this:\n");
+                    print_queue(new_queue);
+                    break;
+
+                case 3:
+                    if (get_size(new_queue) == 0) {
+                        printf("The queue is empty. Nothing to sort.\n");
+                        break;
+                    }
+                    new_queue = quick_sort(new_queue);
+                    printf("Now queue looks like this:\n");
+                    print_queue(new_queue);
+                    break;
+
+                case 4:
+                    if (get_size(new_queue) == 0) {
+                        printf("The queue is empty.\n");
+                        break;
+                    }
+                    printf("=--\n");
+                    print_queue(new_queue);
+                    printf("=--\n");
+                    break;
+
+                case 0:
+                    printf("Moving on...\n");
+                    break;
+
+                default:
+                    printf("Invalid choice. Please, choose a valid option.\n");
+                }
+            } while (choice != 0);
             // Функция join также очищает память двух входных очередей после слияния
             merged_queue = join(temp_q, new_queue); // Конкатенация двух очередей
         }
-
+        
         if (get_size(merged_queue) != 0) {
             printf("Merging queues...\n");
-            print_queue(merged_queue);
-            printf("\n");
-
-            printf("Sorting queue using quick sort...\n");
-            merged_queue = quick_sort(merged_queue); // Быстрая сортировка Хоара
             print_queue(merged_queue);
             printf("\n");
         }
