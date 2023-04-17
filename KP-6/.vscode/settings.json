@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "__node_handle": "c",
-        "getopt.h": "c",
-        "dict.h": "c"
-    }
-}

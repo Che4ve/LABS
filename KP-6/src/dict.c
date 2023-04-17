@@ -18,6 +18,18 @@ HashNode* newNode(void* value_p)
     return new_node;
 }
 
+void ht_free(HashTable* ht)
+{
+    HashNode** table = ht->table;
+    int size = ht->size;
+    for (int i = 0; i < size; i++) {
+        free(table[i]);
+    }
+    free(table);
+    free(ht);
+    return;
+}
+
 void* get_value(HashNode* node)
 {
     if (node == NULL) {
@@ -34,7 +46,7 @@ HashNode* get_next(HashNode* node)
     return node->next_node;
 }
 
-HashNode* get_last(HashNode* node)
+HashNode* get_last(HashNode* node) 
 {
     HashNode* result = node;
     while (get_next(result) != NULL) {
@@ -72,14 +84,6 @@ void ht_insert(HashTable* ht, const char* key, void* pointer)
     return;
 }
 
-void* ht_find(HashTable* ht, char* key)
-{
-    int hash_index = hash(ht, key);
-    HashNode** table = ht->table;
-    void* found = table[hash_index];
-    return found;
-}
-
 HashNode* ht_get_first(HashTable* ht, const char* key)
 {
     HashNode** table = ht->table;
@@ -104,24 +108,23 @@ void ht_print(HashTable* ht)
         if (current_node == NULL) {
             continue;
         }
-        printf("|============|==================|=====|\n");
+        printf("||============||==================||=====||\n");
         do {
             StudentPC* pc = get_value(current_node);
             char* name = get_name(pc);
             char spec_list[MAX_LEN];
             specstostr(pc, spec_list);
-            printf("| %10s | %16p | %3d |, specs: %s\n", name, pc, i, spec_list);
+            printf("|| %10s || %30s ||\n", name, spec_list);
             current_node = get_next(current_node);
         } while (current_node != NULL);
     }
-    printf("|============|==================|=====|\n");
+    printf("||============||==================||=====||\n");
     return;
 }
 
-void ht_print_specs(HashTable* ht)
+void ht_print_specs(StudentPC* pc)
 {
-    int size = ht->size;
-    HashNode** table = ht->table;
+    HashTable* ht = pc->specs;
 
     char* name = ht_get_first(ht, "name")->value;
     int* cpu_n = ht_get_first(ht, "cpu_n")->value;
@@ -131,7 +134,7 @@ void ht_print_specs(HashTable* ht)
     int* vram = ht_get_first(ht, "vram")->value;
     int* hdd_n = ht_get_first(ht, "hdd_n")->value;
     char* hdds = ht_get_first(ht, "hdds")->value;
-    int* devices_n = ht_get_first(ht, "device_n")->value;
+    int* device_n = ht_get_first(ht, "device_n")->value;
     char* os = ht_get_first(ht, "os")->value;
 
     printf("|==========================================|\n");
@@ -151,10 +154,9 @@ void ht_print_specs(HashTable* ht)
     printf("|=========|================================|\n");
     printf("|  HDDs   |   %15s\t\t   |\n", hdds);
     printf("|=========|================================|\n");
-    printf("| Devices | %15d\t\t   |\n", *devices_n);
+    printf("| Devices | %15d\t\t   |\n", *device_n);
     printf("|=========|================================|\n");
     printf("|   OS    |     %15s\t\t   |\n", os);
     printf("|=========|================================|\n");
     return;
 }
-

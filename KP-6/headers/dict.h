@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../headers/studentpc.h"
+#include "../headers/globals.h"
 
-#define TABLE_SIZE 131
+#define TABLE_SIZE 1051
 
 typedef unsigned int uint;
 
@@ -23,6 +23,8 @@ typedef struct _hash_table {
 HashTable* createTable(int table_size);
 
 HashNode* newNode(void* value_p);
+
+void ht_free(HashTable* ht);
 
 void* get_value(HashNode* node);
 
@@ -42,6 +44,7 @@ HashNode* ht_get_next(HashNode* node);
 
 void ht_print(HashTable* ht);
 
-void ht_print_specs(HashTable* ht);
+typedef struct _studentpc StudentPC;
+void ht_print_specs(StudentPC* pc);
 
 #endif
