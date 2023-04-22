@@ -1,0 +1,4 @@
+Simpson,3,AMD Ryzen 9|AMD Ryzen 7|AMD Ryzen 3,8GB,RTX 1070,32GB,1,1TB,8,Debian
+Gonzalez,1,Intel Core i9,32GB,RTX 1050,16GB,1,5TB,1,Ubuntu
+Lopez,1,Intel Core i5,32GB,RTX 3060,32GB,1,2TB,2,Ubuntu
+Gonzalez,1,Intel Core i9,64GB,RTX 1050,16GB,1,5TB,1,Debian

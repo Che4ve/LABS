@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include "../headers/globals.h"
 
-#define TABLE_SIZE 1051
-
 typedef unsigned int uint;
 
 typedef struct _hash_node {
@@ -36,15 +34,8 @@ uint hash(HashTable* ht, const char* key);
 
 void ht_insert(HashTable* ht, const char* key, void* pointer);
 
-void* ht_find(HashTable* ht, char* key);
-
 HashNode* ht_get_first(HashTable* ht, const char* key);
 
 HashNode* ht_get_next(HashNode* node);
-
-void ht_print(HashTable* ht);
-
-typedef struct _studentpc StudentPC;
-void ht_print_specs(StudentPC* pc);
 
 #endif

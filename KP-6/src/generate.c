@@ -74,16 +74,12 @@ void rand_os(char* destination)
 void generate_file(char* filename)
 {
     char* extension = strrchr(filename, '.');
-    char* file_txt = strdup(filename);
     if (extension != NULL && strcmp(extension, ".txt") != 0) {
-        strcat(file_txt, ".txt");
-    }
-    else if (strcmp(extension, ".txt") != 0) {
         printf("The file does not have the expected extension.\n");
         return;
     }
     FILE* fp;
-    fp = fopen(file_txt, "w");
+    fp = fopen(filename, "w");
     if (fp == NULL) {
         perror("Error");
         exit(ENOENT);
@@ -121,7 +117,7 @@ void generate_file(char* filename)
             os);
     }
     fclose(fp);
-    printf("Done. Created %s\n", file_txt);
+    printf("Done. Created \"%s\"\n", filename);
 }
 
 int main(int argc, char** argv)

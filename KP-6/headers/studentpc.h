@@ -18,22 +18,24 @@ typedef struct _key_spec {
 
 typedef struct _studentpc {
     // Name
-    char name[SPEC_SIZE];
+    char* name;
     // CPU
     int cpu_num;
-    char cpus[SPEC_SIZE];
+    char* cpus;
     // RAM
     int ram;
     // GPU
-    char gpu[SPEC_SIZE];
+    char* gpu;
+    // VRAM
     int vram;
     // HDD
     int hdd_num;
-    char hdds[SPEC_SIZE];
+    // HDDS
+    char* hdds;
     // Devices
     int device_num;
     // Operating System
-    char os[SPEC_SIZE];
+    char* os;
     // Specs table
     HashTable* specs;
 } StudentPC;
@@ -46,12 +48,16 @@ char* get_name(StudentPC* pc);
 
 void* get_spec(StudentPC* pc, const char* key);
 
-void read_spec_from(const char* type, void* spec_p, char* input_p);
+int read_spec_from(const char* type, void* spec_p, char* input_p);
 
-void csv_read(StudentPC* pc, char* input_s);
+int csv_read(StudentPC* pc, char* input_s);
 
 int bin_read(StudentPC *pc, FILE* fp);
 
-void* specstostr(StudentPC* pc, char* str);
+void specstostr(StudentPC* pc, char* str, size_t len);
+
+void pc_print_specs(StudentPC* pc);
+
+void pc_print_table(HashTable* ht);
 
 #endif

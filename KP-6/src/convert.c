@@ -38,7 +38,7 @@ void convert_file(char* filename)
     } else {
         strcpy(basename, filename);
     }
-    char* file_bin = strdup(basename);
+    char* file_bin = _strdup(basename);
     strcat(file_bin, ".bin");
 
     // Open the binary file for writing
@@ -62,11 +62,12 @@ void convert_file(char* filename)
         fwrite(pc->hdds,          sizeof(char), SPEC_SIZE, fp_out);
         fwrite(&(pc->device_num), sizeof(int), 1, fp_out);
         fwrite(pc->os,            sizeof(char), SPEC_SIZE, fp_out);
+        pc_free(pc);
     }
     // Close both files
     fclose(fp_in);
     fclose(fp_out);
-    printf("Done. Created %s\n", file_bin);
+    printf("Done. Created \"%s\"\n", file_bin);
 }
 
 int main(int argc, char **argv) 

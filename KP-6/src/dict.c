@@ -5,6 +5,7 @@
 HashTable* createTable(int table_size)
 {
     HashTable* new_ht = malloc(sizeof(HashTable));
+    if (new_ht == NULL) return NULL;
     new_ht->table = calloc(table_size, sizeof(HashNode));
     new_ht->size = table_size;
     return new_ht;
@@ -13,6 +14,7 @@ HashTable* createTable(int table_size)
 HashNode* newNode(void* value_p)
 {
     HashNode* new_node = malloc(sizeof(HashNode));
+    if (new_node == NULL) return NULL;
     new_node->value = value_p;
     new_node->next_node = NULL;
     return new_node;
@@ -23,9 +25,15 @@ void ht_free(HashTable* ht)
     HashNode** table = ht->table;
     int size = ht->size;
     for (int i = 0; i < size; i++) {
-        free(table[i]);
+        HashNode* node = table[i];
+        while (node != NULL) {
+            HashNode* tmp = node;
+            node = node->next_node;
+            free(tmp);
+        }
+        table[i] = NULL;
     }
-    free(table);
+    free(ht->table);
     free(ht);
     return;
 }
@@ -97,66 +105,4 @@ HashNode* ht_get_next(HashNode* node)
         return NULL;
     }
     return node->next_node;
-}
-
-void ht_print(HashTable* ht)
-{
-    int size = ht->size;
-    HashNode** table = ht->table;
-    for (int i = 0; i < size; i++) {
-        HashNode* current_node = table[i];
-        if (current_node == NULL) {
-            continue;
-        }
-        printf("||============||==================||=====||\n");
-        do {
-            StudentPC* pc = get_value(current_node);
-            char* name = get_name(pc);
-            char spec_list[MAX_LEN];
-            specstostr(pc, spec_list);
-            printf("|| %10s || %30s ||\n", name, spec_list);
-            current_node = get_next(current_node);
-        } while (current_node != NULL);
-    }
-    printf("||============||==================||=====||\n");
-    return;
-}
-
-void ht_print_specs(StudentPC* pc)
-{
-    HashTable* ht = pc->specs;
-
-    char* name = ht_get_first(ht, "name")->value;
-    int* cpu_n = ht_get_first(ht, "cpu_n")->value;
-    char* cpus = ht_get_first(ht, "cpus")->value;
-    int* ram = ht_get_first(ht, "ram")->value;
-    char* gpu = ht_get_first(ht, "gpu")->value;
-    int* vram = ht_get_first(ht, "vram")->value;
-    int* hdd_n = ht_get_first(ht, "hdd_n")->value;
-    char* hdds = ht_get_first(ht, "hdds")->value;
-    int* device_n = ht_get_first(ht, "device_n")->value;
-    char* os = ht_get_first(ht, "os")->value;
-
-    printf("|==========================================|\n");
-    printf("|\t%s PC\t                   |\n", name);
-    printf("|=========|================================|\n");
-    printf("| CPU num | %15d\t\t   |\n", *cpu_n);
-    printf("|=========|================================|\n");
-    printf("|  CPUs   | %27s\t   |\n", cpus);
-    printf("|=========|================================|\n");
-    printf("|   RAM   | %15d\t\t   |\n", *ram);
-    printf("|=========|================================|\n");
-    printf("|   GPU   |     %15s\t\t   |\n", gpu);
-    printf("|=========|================================|\n");
-    printf("|  VRAM   | %15d\t\t   |\n", *vram);
-    printf("|=========|================================|\n");
-    printf("| HDD num | %15d\t\t   |\n", *hdd_n);
-    printf("|=========|================================|\n");
-    printf("|  HDDs   |   %15s\t\t   |\n", hdds);
-    printf("|=========|================================|\n");
-    printf("| Devices | %15d\t\t   |\n", *device_n);
-    printf("|=========|================================|\n");
-    printf("|   OS    |     %15s\t\t   |\n", os);
-    printf("|=========|================================|\n");
-    return;
 }

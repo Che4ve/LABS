@@ -32,5 +32,10 @@ generate:
 convert:
 	$(CC) $(CONV_SRC) -o $(CONV_OUT)
 
+debug: 
+	$(CC) -g $(MAIN_SRC) -o $(MAIN_OUT)
+	$(CC) -g $(GEN_SRC) -o $(GEN_OUT)
+	$(CC) -g $(CONV_SRC) -o $(CONV_OUT)
+
 clean:
 	rm -f *.out

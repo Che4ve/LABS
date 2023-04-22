@@ -8,6 +8,8 @@
 
 #define max(a, b) ((((int) a) > ((int) b)) ? ((int) a) : ((int) b))
 
+#define TABLE_SIZE 727
+
 typedef struct {
     char* key;
     int rate;
@@ -109,7 +111,7 @@ int os_evaluate(char* os)
     return get_fixed_rate(kr_allowed_os, os);
 }
 
-int cmp_pcs(HashTable* pc_table, const char* key) 
+StudentPC* cmp_pcs(HashTable* pc_table, const char* key) 
 {
     float this_rates[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     float this_sum = 0;
@@ -213,10 +215,7 @@ int cmp_pcs(HashTable* pc_table, const char* key)
         this_node = next_node;
 
     }   
-    char spec_list[MAX_LEN];
-    specstostr(this_pc, spec_list);
-    printf("Best PC in %s collection is:\n%s\n", key, spec_list);
-    return 1;
+    return this_pc;
 }
 
 void add_considered(StudentPC * pc, char stud_list[TABLE_SIZE][SPEC_SIZE], int* stud_count, HashTable* pc_table)
@@ -238,21 +237,31 @@ void add_considered(StudentPC * pc, char stud_list[TABLE_SIZE][SPEC_SIZE], int* 
     return;
 }
 
-int main(int argc, char **argv)
+void print_menu() {
+    printf("    result - display the result\n");
+    printf("    add [(Surname),(Number of CPUs),(CPUs {use '|' to split them}),(RAM size),(GPU),(Number of HDDs),(HDD sizes {use '|' to split them}),(number of peripherals),(OS)] - add a student\n");
+    printf("    remove [surname] - remove a student\n");
+    printf("    info [surname] - information about a student\n");
+    printf("    table - display information about all students\n");
+    printf("    q - quit the program\n");
+}
+
+int main(int argc, char *argv[])
 {  
-    if (argc != 2) {
+    if (argc != 2 || argv[1] == NULL) {
         printf("Usage: main.out <data_file>\n");
         exit(1);
     }
+    char filename[MAX_LEN];
+    strncpy(filename, argv[1], MAX_LEN);
     // Open the file for reading
-    FILE* f1 = fopen(argv[1], "r");
+    FILE* f1 = fopen(filename, "r");
     if (f1 == NULL) {
         perror("Error");
         exit(ENOENT);
     }
     bool binary = false; // Whether file is binary or not
-    char filename[MAX_LEN];
-    strcpy(filename, argv[1]);
+    
     char* extension = strrchr(filename, '.');
     if (extension == NULL || strcmp(extension, ".txt") == 0) {
         printf("The file has the expected extension (.txt)\n");
@@ -263,20 +272,20 @@ int main(int argc, char **argv)
     }
     else {
         printf("The file does not have the expected extension.\n");
+        exit(2);
     }
+    
     // Buffer to store a single line from the file
     char buffer[MAX_LEN];
     // Create a hash table to store the student PCs
     HashTable* pc_table = createTable(TABLE_SIZE);
-
     char considered_stud[TABLE_SIZE][SPEC_SIZE];
     int considered_count = 0;
-     // Read the rest of the lines and insert them into the hash table
+    // Read the rest of the lines and insert them into the hash table
     if (binary) {
         while (true) {
             StudentPC* new_pc = newPC();
-            int result = bin_read(new_pc, f1);
-            if (result == 0) {
+            if (bin_read(new_pc, f1) == 0) {
                 break;
             }
             char* name = get_name(new_pc);
@@ -292,17 +301,76 @@ int main(int argc, char **argv)
             char* name = get_name(new_pc);
             add_considered(new_pc, considered_stud, &considered_count, pc_table);
             ht_insert(pc_table, name, new_pc);
+            //ht_print_specs(new_pc);
         }
     }
-     // Print the contents of the hash table
-    ht_print(pc_table);
+    printf("Type 'help' to see the list of actions\n");
+    char action[MAX_LEN];
+    do {
+        fscanf(stdin, "%s", action);
+        char* command = strtok(action, " ");
+        if (strcmp(command, "help") == 0) {
+            print_menu();
+        }
+        else if (strcmp(command, "result") == 0) {
+            for (int i = 0; i < considered_count; i++) {
+                StudentPC* best_pc = cmp_pcs(pc_table, considered_stud[i]);
+                char spec_list[MAX_LEN];
+                specstostr(best_pc, spec_list, MAX_LEN);
+                printf("Best PC in %s collection is:\n%s\n", get_name(best_pc), spec_list);
+            }
+        }
+        else if (strcmp(action, "add") == 0) {
+            FILE* f_edit = open(filename, "a");
+            if (f_edit == NULL) {
+                perror("Error");
+                exit(ENOENT);
+            }
+            StudentPC* new_pc = newPC();
+            csv_read(new_pc, action);
+            char* name = get_name(new_pc);
+            add_considered(new_pc, considered_stud, &considered_count, pc_table);
+            ht_insert(pc_table, name, new_pc);
+        }
+        else if (strcmp(command, "remove") == 0) {
+            
+        }
+        else if (strcmp(command, "info") == 0) {
 
-    for (int i = 0; i < considered_count; i++) {
-        cmp_pcs(pc_table, considered_stud[i]);
-        printf("\n");
+        }
+        else if (strcmp(command, "table") == 0) {
+            // Print the contents of the hash table
+            pc_print_table(pc_table);
+        }
+        else if (strcmp(command, "q") == 0) {
+            continue;
+        }
+        else {
+            printf("Unknown action. Try again.\n");
+        }
+    } while (strcmp(action, "q") != 0);
+    
+    
+
+    
+    //printf("\n");
+    for (int i = 0; i < pc_table->size; i++) {
+        if (pc_table->table[i] == NULL) {
+            continue;
+        }
+        HashNode* node = pc_table->table[i];
+        while (node != NULL) {
+            StudentPC* pc = (StudentPC*)node->value;
+            HashNode* tmp = node;
+            node = node->next_node;
+            pc_free(pc);
+            free(tmp);
+            pc_table->table[i] = NULL;
+        }
     }
-    printf("\n");
-     // Close the file
+    //free(considered_stud);
+    ht_free(pc_table);
+    // Close the file
     fclose(f1);
-     return 0;
+    return 0;
 }
