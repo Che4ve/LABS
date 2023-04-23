@@ -20,24 +20,6 @@ HashNode* newNode(void* value_p)
     return new_node;
 }
 
-void ht_free(HashTable* ht)
-{
-    HashNode** table = ht->table;
-    int size = ht->size;
-    for (int i = 0; i < size; i++) {
-        HashNode* node = table[i];
-        while (node != NULL) {
-            HashNode* tmp = node;
-            node = node->next_node;
-            free(tmp);
-        }
-        table[i] = NULL;
-    }
-    free(ht->table);
-    free(ht);
-    return;
-}
-
 void* get_value(HashNode* node)
 {
     if (node == NULL) {
@@ -68,10 +50,11 @@ uint hash(HashTable* ht, const char* key)
     uint index = 5381;
     uint key_len = strlen(key); 
     uint table_size = ht->size;
-    int c;
+    int c = *key++;
     //djb2 algorithm
-    while (c = *key++) {
+    while (c) {
         index = ((index << 5) + index) + c;
+        c = *key++;
     }
     
     return index % table_size;
@@ -106,3 +89,23 @@ HashNode* ht_get_next(HashNode* node)
     }
     return node->next_node;
 }
+
+void ht_free(HashTable* ht)
+{
+    if (ht == NULL) return;
+    HashNode** table = ht->table;
+    int size = ht->size;
+    for (int i = 0; i < size; i++) {
+        HashNode* node = table[i];
+        while (node != NULL) {
+            HashNode* tmp = node;
+            node = node->next_node;
+            free(tmp);
+        }
+        table[i] = NULL;
+    }
+    free(ht->table);
+    free(ht);
+    return;
+}
+

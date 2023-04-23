@@ -1,8 +1,8 @@
 #include "../headers/globals.h"
 
-char* Properties = "Surname,ProcessorsNumber,CPUs,Memory,NvidiaGPU,GraphicalMemory,HDDsNumber,HDDs,DevicesNumber,OS";
+const char* Properties = "Surname,ProcessorsNumber,CPUs,Memory,NvidiaGPU,GraphicalMemory,HDDsNumber,HDDs,DevicesNumber,OS";
 
-char* allowed_cpus[] = {
+const char* allowed_cpus[] = {
     "Intel Core i3",
     "Intel Core i5",
     "Intel Core i7",
@@ -13,7 +13,7 @@ char* allowed_cpus[] = {
     "AMD Ryzen 9"
 };
 
-char* allowed_os[] = {
+const char* allowed_os[] = {
     "Windows 7",
     "Windows 8",
     "Windows 10",
@@ -23,7 +23,7 @@ char* allowed_os[] = {
     "Debian"
 };
 
-char* allowed_gpus[] = {
+const char* allowed_gpus[] = {
     "RTX 4090",
     "RTX 4080",
     "RTX 3090",
@@ -39,7 +39,7 @@ char* allowed_gpus[] = {
     "RTX 1050",
 };
 
-char* allowed_names[] = {
+const char* allowed_names[] = {
     "Smith",
     "Jones",
     "Brown",

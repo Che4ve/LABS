@@ -1,4 +1,4 @@
-Simpson,3,AMD Ryzen 9|AMD Ryzen 7|AMD Ryzen 3,8GB,RTX 1070,32GB,1,1TB,8,Debian
-Gonzalez,1,Intel Core i9,32GB,RTX 1050,16GB,1,5TB,1,Ubuntu
-Lopez,1,Intel Core i5,32GB,RTX 3060,32GB,1,2TB,2,Ubuntu
-Gonzalez,1,Intel Core i9,64GB,RTX 1050,16GB,1,5TB,1,Debian
+Miller,3,Intel Core i9|AMD Ryzen 9|Intel Core i7,16GB,RTX 4090,32GB,4,5TB|1TB|9TB|8TB,4,Ubuntu
+Lopez,1,Intel Core i3,32GB,RTX 4080,8GB,2,4TB|4TB,4,Windows 10
+Jones,3,AMD Ryzen 9|Intel Core i5|AMD Ryzen 9,32GB,RTX 2080,32GB,4,6TB|5TB|4TB|1TB,14,Windows 10
+Smith,1,Intel Core i5,8GB,RTX 1060,8GB,1,4TB,14,Windows 11

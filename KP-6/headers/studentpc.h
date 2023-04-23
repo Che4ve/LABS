@@ -42,8 +42,6 @@ typedef struct _studentpc {
 
 StudentPC* newPC();
 
-void pc_free(StudentPC *pc);
-
 char* get_name(StudentPC* pc);
 
 void* get_spec(StudentPC* pc, const char* key);
@@ -52,12 +50,16 @@ int read_spec_from(const char* type, void* spec_p, char* input_p);
 
 int csv_read(StudentPC* pc, char* input_s);
 
+void specstostr(StudentPC* pc, char* str, size_t len);
+
 int bin_read(StudentPC *pc, FILE* fp);
 
-void specstostr(StudentPC* pc, char* str, size_t len);
+int bin_write(StudentPC *pc, FILE *fp);
 
 void pc_print_specs(StudentPC* pc);
 
-void pc_print_table(HashTable* ht);
+int pc_print_table(HashTable* ht);
+
+void pc_free(StudentPC *pc);
 
 #endif

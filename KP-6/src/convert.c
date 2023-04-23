@@ -5,7 +5,7 @@
 
 // function prototypes
 StudentPC* newPC();
-void csv_read(StudentPC* pc, char* buffer);
+int csv_read(StudentPC* pc, char* buffer);
 
 typedef struct _record {
     char Surname[SPEC_SIZE];
@@ -20,10 +20,14 @@ typedef struct _record {
     char OS[SPEC_SIZE];
 } Record;
 
-void convert_file(char* filename)
+int convert_file(char* filename)
 {
+    char* extension = strrchr(filename, '.');
+    if (extension != NULL && strcmp(extension, ".txt") != 0) {
+        fprintf(stderr, "The file '%s' does not have the expected extension.\n", filename);
+        return -1;
+    }
     FILE *fp_in, *fp_out;
-    
     // Open the text file for reading
     fp_in = fopen(filename, "r");
     if (fp_in == NULL) {
@@ -51,23 +55,18 @@ void convert_file(char* filename)
     // Read data from the text file and write to the binary file
     while (fgets(buffer, MAX_LEN, fp_in) != NULL) {
         StudentPC* pc = newPC();
-        csv_read(pc, buffer);
-        fwrite(pc->name,          sizeof(char), SPEC_SIZE, fp_out);
-        fwrite(&(pc->cpu_num),    sizeof(int), 1, fp_out);
-        fwrite(pc->cpus,          sizeof(char), SPEC_SIZE, fp_out);
-        fwrite(&(pc->ram),        sizeof(int), 1, fp_out);
-        fwrite(pc->gpu,           sizeof(char), SPEC_SIZE, fp_out);
-        fwrite(&(pc->vram),       sizeof(int), 1, fp_out);
-        fwrite(&(pc->hdd_num),    sizeof(int), 1, fp_out);
-        fwrite(pc->hdds,          sizeof(char), SPEC_SIZE, fp_out);
-        fwrite(&(pc->device_num), sizeof(int), 1, fp_out);
-        fwrite(pc->os,            sizeof(char), SPEC_SIZE, fp_out);
+        if (csv_read(pc, buffer) != 0) {
+            fprintf(stderr, "Converting Error: wrong or missing data.\n");
+            return -1;
+        }
+        bin_write(pc, fp_out);
         pc_free(pc);
     }
     // Close both files
     fclose(fp_in);
     fclose(fp_out);
     printf("Done. Created \"%s\"\n", file_bin);
+    return 0;
 }
 
 int main(int argc, char **argv) 
@@ -78,7 +77,9 @@ int main(int argc, char **argv)
         exit(1);
     }
     for (int i = 1; i < argc; i++) {
-        convert_file(argv[i]);
+        if (convert_file(argv[i]) == -1) {
+            return -1;
+        }
     }
     return 0;
 }

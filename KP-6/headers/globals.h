@@ -34,11 +34,11 @@
 #define MAX_DEVICES 15
 
 //
-extern char* Properties;
-extern char* allowed_cpus[];
-extern char* allowed_os[];
-extern char* allowed_gpus[];
-extern char* allowed_names[];
+extern const char* Properties;
+extern const char* allowed_cpus[];
+extern const char* allowed_os[];
+extern const char* allowed_gpus[];
+extern const char* allowed_names[];
 
 #include "../headers/dict.h"
 #include "../headers/studentpc.h"

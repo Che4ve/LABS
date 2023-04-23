@@ -23,7 +23,7 @@ void rand_cpus(char* destination, int* cpu_n)
     cpu_num = max(cpu_num, 1);
     char result[SPEC_SIZE] = { 0 };
     for (int i = 0; i < cpu_num; i++) {
-        char* rand_cpu = allowed_cpus[rand() % NUM_ALWD_CPUS];
+        char* rand_cpu = strdup(allowed_cpus[rand() % NUM_ALWD_CPUS]);
         strcat(result, rand_cpu);
         if (i != cpu_num - 1) {
             strcat(result, "|");
@@ -71,12 +71,12 @@ void rand_os(char* destination)
 }
 
 // FILE GENERATOR
-void generate_file(char* filename)
+int generate_file(char* filename)
 {
     char* extension = strrchr(filename, '.');
     if (extension != NULL && strcmp(extension, ".txt") != 0) {
-        printf("The file does not have the expected extension.\n");
-        return;
+        fprintf(stderr, "The file '%s' does not have the expected extension.\n", filename);
+        return -1;
     }
     FILE* fp;
     fp = fopen(filename, "w");
@@ -88,7 +88,7 @@ void generate_file(char* filename)
     int iter_num = rand() % MAX_STUDENTS;
     iter_num = max(iter_num, 1);
     for (int i = 0; i < iter_num; i++) {
-        char* name = allowed_names[rand() % NUM_ALWD_NAMES];
+        char* name = strdup(allowed_names[rand() % NUM_ALWD_NAMES]);
         int cpu_n;
         char cpus[SPEC_SIZE];
         rand_cpus(cpus, &cpu_n);
@@ -118,6 +118,7 @@ void generate_file(char* filename)
     }
     fclose(fp);
     printf("Done. Created \"%s\"\n", filename);
+    return 0;
 }
 
 int main(int argc, char** argv)
@@ -128,7 +129,9 @@ int main(int argc, char** argv)
         exit(1);
     }
     for (int i = 1; i < argc; i++) {
-        generate_file(argv[i]);
+        if (generate_file(argv[i]) == -1) {
+            return -1;
+        };
     }
     return 0;
 }

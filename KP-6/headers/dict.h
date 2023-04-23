@@ -22,7 +22,6 @@ HashTable* createTable(int table_size);
 
 HashNode* newNode(void* value_p);
 
-void ht_free(HashTable* ht);
 
 void* get_value(HashNode* node);
 
@@ -37,5 +36,7 @@ void ht_insert(HashTable* ht, const char* key, void* pointer);
 HashNode* ht_get_first(HashTable* ht, const char* key);
 
 HashNode* ht_get_next(HashNode* node);
+
+void ht_free(HashTable* ht);
 
 #endif
