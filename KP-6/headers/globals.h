@@ -3,7 +3,7 @@
 
 #include <errno.h>
 
-#define MAX_LEN 200 // Maximum length of a line in the file
+#define MAX_LEN 256 // Maximum length of a line in the file
 #define SPEC_SIZE 55 // Maximum size of a (char*) specification
 
 #define MAX_STUDENTS 50

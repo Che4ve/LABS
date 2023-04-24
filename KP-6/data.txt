@@ -1,4 +1,22 @@
-Miller,3,Intel Core i9|AMD Ryzen 9|Intel Core i7,16GB,RTX 4090,32GB,4,5TB|1TB|9TB|8TB,4,Ubuntu
-Lopez,1,Intel Core i3,32GB,RTX 4080,8GB,2,4TB|4TB,4,Windows 10
-Jones,3,AMD Ryzen 9|Intel Core i5|AMD Ryzen 9,32GB,RTX 2080,32GB,4,6TB|5TB|4TB|1TB,14,Windows 10
-Smith,1,Intel Core i5,8GB,RTX 1060,8GB,1,4TB,14,Windows 11
+Wayne,1,AMD Ryzen 9,16GB,RTX 1080,32GB,3,1TB|2TB|6TB,6,Windows 11
+Simpson,1,Intel Core i7,8GB,RTX 1070,8GB,1,1TB,7,Windows 7
+Rodriguez,3,AMD Ryzen 7|AMD Ryzen 5|AMD Ryzen 9,16GB,RTX 1060,32GB,2,3TB|4TB,2,Windows 11
+Hernandez,3,Intel Core i7|Intel Core i7|AMD Ryzen 3,32GB,RTX 1080,8GB,2,4TB|2TB,6,Windows 7
+Gonzalez,1,AMD Ryzen 9,32GB,RTX 3080,4GB,1,4TB,1,Windows 8
+Wilson,1,Intel Core i3,32GB,RTX 3070,16GB,1,4TB,1,Debian
+Garcia,2,Intel Core i9|Intel Core i9,32GB,RTX 4080,16GB,2,2TB|1TB,9,Windows 8
+Wilson,1,Intel Core i3,2GB,RTX 1070,32GB,1,4TB,10,Windows 7
+Gonzalez,3,AMD Ryzen 3|AMD Ryzen 5|AMD Ryzen 5,4GB,RTX 4080,2GB,2,2TB|5TB,14,Ubuntu
+Jones,2,Intel Core i9|Intel Core i7,32GB,RTX 1080,32GB,4,2TB|4TB|9TB|2TB,1,Ubuntu
+Wayne,1,Intel Core i5,16GB,RTX 3090,32GB,1,6TB,1,Debian
+Brown,1,Intel Core i7,32GB,RTX 1060,32GB,4,8TB|7TB|4TB|4TB,8,Windows 8
+Williams,2,AMD Ryzen 3|Intel Core i7,2GB,RTX 4080,16GB,1,6TB,8,Windows 8
+Wilson,1,Intel Core i9,8GB,RTX 3060,32GB,3,7TB|5TB|5TB,9,Ubuntu
+Wilson,1,Intel Core i9,32GB,RTX 3060,8GB,1,6TB,6,Fedora
+Lopez,1,AMD Ryzen 5,32GB,RTX 3070,32GB,3,8TB|3TB|8TB,2,Windows 8
+Hernandez,1,Intel Core i7,32GB,RTX 3060,32GB,4,8TB|7TB|9TB|7TB,12,Fedora
+Rodriguez,3,Intel Core i5|Intel Core i9|AMD Ryzen 7,32GB,RTX 1080,32GB,4,5TB|3TB|9TB|5TB,4,Windows 8
+Brown,3,AMD Ryzen 5|AMD Ryzen 7|AMD Ryzen 5,8GB,RTX 1060,32GB,2,6TB|7TB,3,Windows 11
+Lopez,3,AMD Ryzen 9|Intel Core i7|AMD Ryzen 5,32GB,RTX 3080,2GB,4,2TB|1TB|8TB|6TB,10,Debian
+Gonzalez,1,AMD Ryzen 9,32GB,RTX 3080,16GB,4,1TB|6TB|8TB|1TB,3,Debian
+Chesnokov,3,Intel Core i7|Intel Core i5|AMD Ryzen 9,4GB,RTX 3060,16GB,1,5TB,7,Fedora

@@ -11,7 +11,7 @@
 #define TABLE_SIZE 727
 
 typedef struct {
-    char* key;
+    const char* key;
     int rate;
 } KeyRate;
 
@@ -24,7 +24,7 @@ KeyRate kr_allowed_cpus[] = {
     {"AMD Ryzen 5", 5},
     {"AMD Ryzen 7", 7},
     {"AMD Ryzen 9", 10},
-    {'\0', -1}
+    {NULL, -1}
 };
 
 KeyRate kr_allowed_os[] = {
@@ -35,17 +35,17 @@ KeyRate kr_allowed_os[] = {
     {"Ubuntu", 6},
     {"Fedora", 7},
     {"Debian", 8},
-    {'\0', -1}
+    {NULL, -1}
 };
 
 int get_fixed_rate(KeyRate* dict, const char* key)
 {
     KeyRate cur_elem = dict[0];
-    char* cur_key = cur_elem.key;
+    const char* cur_key = cur_elem.key;
     for (int i = 1; strcmp(cur_key, key) != 0; i++) {
         cur_elem = dict[i];
         cur_key = cur_elem.key;
-        if (cur_key == '\0') {
+        if (cur_key == NULL) {
             return cur_elem.rate; // return -1
         }
     }
@@ -125,6 +125,7 @@ StudentPC* cmp_pcs(HashTable* pc_table, const char* key)
     float coeff_sum = CPU_N_COEFF + CPUS_COEFF + RAM_COEFF + GPU_COEFF + VRAM_COEFF \
         + HDD_N_COEFF + HDDS_COEFF + DEVICE_N_COEFF + OS_COEFF;
     HashNode* this_node = ht_get_first(pc_table, key);
+    if (this_node == NULL) return NULL;
     StudentPC* this_pc = this_node->value;
 
     while (this_node->next_node != NULL) {
@@ -243,12 +244,26 @@ void add_considered(char* name, char stud_list[TABLE_SIZE][SPEC_SIZE], int* stud
 
 StudentPC* fadd_student(const char* filename, char* input_s, HashTable* pc_table)
 {
-    FILE* f_edit = fopen(filename, "a");
+    FILE* f_edit = fopen(filename, "a+");
     if (f_edit == NULL) {
         perror("Error");
         exit(ENOENT);
     }
-    fprintf(f_edit, "\n%s", input_s);
+    
+    // Seek to the end of the file
+    fseek(f_edit, 0, SEEK_END);
+    // Move back one character
+    fseek(f_edit, -1, SEEK_CUR);
+    // Read the last character
+    char last_c = fgetc(f_edit);
+    if (last_c == '\n' || ftell(f_edit) == 0) {
+        rewind(f_edit);
+        fprintf(f_edit, "%s", input_s);
+    }
+    else {
+        rewind(f_edit);
+        fprintf(f_edit, "\n%s", input_s);
+    }
     StudentPC* new_pc = newPC();
     if (csv_read(new_pc, input_s) != 0) {
         return NULL;
@@ -396,7 +411,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
     char filename[MAX_LEN];
-    strncpy(filename, argv[1], MAX_LEN);
+    strncpy(filename, argv[1], MAX_LEN - 1);
+    filename[MAX_LEN - 1] = '\0';
     FILE* f1;
     bool binary = false; // Whether file is binary or not
     
@@ -475,6 +491,9 @@ int main(int argc, char *argv[])
             int found = 0;
             for (int i = 0; i < considered_count; i++) {
                 StudentPC* best_pc = cmp_pcs(pc_table, considered_stud[i]);
+                if (best_pc == NULL) {
+                    continue;
+                }
                 char spec_list[MAX_LEN];
                 specstostr(best_pc, spec_list, MAX_LEN);
                 printf("Best PC in %s collection is:\n%s.\n\n", get_name(best_pc), spec_list);

@@ -13,18 +13,10 @@ GEN_OUT = gen.out
 CONV_SRC = src/convert.c $(GLOBALS) 
 CONV_OUT = conv.out
 
-
-
 all: 
 	$(CC) $(CFLAGS) $(MAIN_SRC) -o $(MAIN_OUT)
 	$(CC) $(GEN_SRC) -o $(GEN_OUT)
 	$(CC) $(CONV_SRC) -o $(CONV_OUT)
-
-print:    io.o
-	$(CC) $^ -o $@
-
-execute:  gen.out conv.out main.out
-	$(CC) $< -o $@
 
 generate: 
 	$(CC) $(GEN_SRC) -o $(GEN_OUT)

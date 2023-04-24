@@ -12,16 +12,17 @@ StudentPC* newPC()
     new_pc->hdds = calloc(SPEC_SIZE, sizeof(char));
     new_pc->os =   calloc(SPEC_SIZE, sizeof(char));
 
-    //*new_pc->name = '\0';
+    *new_pc->name = '\0';
     new_pc->cpu_num = 0;
-    //*new_pc->cpus = '\0';
+    *new_pc->cpus = '\0';
     new_pc->ram = 0;
-    //*new_pc->gpu = '\0';
+    *new_pc->gpu = '\0';
     new_pc->vram = 0;
     new_pc->hdd_num = 0;
-    //*new_pc->hdds = '\0';
+    *new_pc->hdds = '\0';
     new_pc->device_num = 0;
-    //*new_pc->os = '\0';
+    *new_pc->os = '\0';
+    
     new_pc->specs = createTable(SPECS_HT_SIZE);
     HashTable* spec_list = new_pc->specs;
     ht_insert(spec_list, "name",       new_pc->name);
@@ -174,7 +175,8 @@ int csv_read(StudentPC *pc, char* input_s)
 
 void specstostr(StudentPC* pc, char* str, size_t len)
 {
-    snprintf(str, len, "CPUs: %d - %s; %dGB of RAM; %s %dGB; HDDs: %d - %s; devices: %d; OS: %s", \
+    if (pc == NULL || str == NULL || len <= 0) return;
+    snprintf(str, len, "CPUs: %d - %s; %dGB of RAM; %s %dGB; HDDs: %d - %s; devices: %d; OS: %s", 
     pc->cpu_num, pc->cpus, pc->ram, pc->gpu, pc->vram, pc->hdd_num, pc->hdds, pc->device_num, pc->os);
     return;
 }
@@ -215,6 +217,7 @@ void pc_print_specs(StudentPC* pc)
 {
     if (pc == NULL) return;
     HashTable* ht = pc->specs;
+    if (ht_get_first(ht, "name") == NULL) return;
     char* name =    ht_get_first(ht, "name")->value;
     int* cpu_n =    ht_get_first(ht, "cpu_n")->value;
     char* cpus =    ht_get_first(ht, "cpus")->value;
@@ -266,6 +269,7 @@ int pc_print_table(HashTable* ht)
             StudentPC* pc = get_value(current_node);
             char* name = get_name(pc);
             char spec_list[MAX_LEN];
+            spec_list[MAX_LEN - 1] = '\0';
             specstostr(pc, spec_list, MAX_LEN);
             printf("|| %10s || %30s\n", name, spec_list);
             current_node = get_next(current_node);
