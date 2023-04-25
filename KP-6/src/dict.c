@@ -48,7 +48,6 @@ HashNode* get_last(HashNode* node)
 uint hash(HashTable* ht, const char* key)
 {
     uint index = 5381;
-    uint key_len = strlen(key); 
     uint table_size = ht->size;
     int c = *key++;
     //djb2 algorithm

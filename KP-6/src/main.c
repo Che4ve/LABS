@@ -282,7 +282,6 @@ StudentPC* fadd_student_bin(const char* filename, char* input_s, HashTable* pc_t
         perror("Error");
         exit(ENOENT);
     }
-    char buffer[MAX_LEN];
     StudentPC* new_pc = newPC();
     if (csv_read(new_pc, input_s) != 0) {
         return NULL;

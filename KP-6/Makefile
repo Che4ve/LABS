@@ -1,6 +1,5 @@
 CC = gcc
-CFLAGS = -std=c17
-PARAMS = S:/Git/labs/KP-6/info.txt
+CFLAGS = -std=c17 -Wall
 
 GLOBALS = src/studentpc.c src/dict.c src/globals.c
 
@@ -15,19 +14,19 @@ CONV_OUT = conv.out
 
 all: 
 	$(CC) $(CFLAGS) $(MAIN_SRC) -o $(MAIN_OUT)
-	$(CC) $(GEN_SRC) -o $(GEN_OUT)
-	$(CC) $(CONV_SRC) -o $(CONV_OUT)
+	$(CC) $(CFLAGS) $(GEN_SRC) -o $(GEN_OUT)
+	$(CC) $(CFLAGS) $(CONV_SRC) -o $(CONV_OUT)
 
 generate: 
-	$(CC) $(GEN_SRC) -o $(GEN_OUT)
+	$(CC) $(CFLAGS) $(GEN_SRC) -o $(GEN_OUT)
 
 convert:
-	$(CC) $(CONV_SRC) -o $(CONV_OUT)
+	$(CC) $(CFLAGS) $(CONV_SRC) -o $(CONV_OUT)
 
 debug: 
-	$(CC) -g $(MAIN_SRC) -o $(MAIN_OUT)
-	$(CC) -g $(GEN_SRC) -o $(GEN_OUT)
-	$(CC) -g $(CONV_SRC) -o $(CONV_OUT)
+	$(CC) -g $(CFLAGS) $(MAIN_SRC) -o $(MAIN_OUT)
+	$(CC) -g $(CFLAGS) $(GEN_SRC) -o $(GEN_OUT)
+	$(CC) -g $(CFLAGS) $(CONV_SRC) -o $(CONV_OUT)
 
 clean:
 	rm -f *.out

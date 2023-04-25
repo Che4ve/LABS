@@ -71,7 +71,6 @@ int convert_file(char* filename)
 
 int main(int argc, char **argv) 
 {
-    int num;
     if (argc < 2) {
         printf("Usage: conv.out <text_file> ..\n");
         exit(1);
