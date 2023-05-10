@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     if (argc == 2) {
         printf("Reading data from %s file.\n", argv[1]);
         isFile = true;
-        strncpy(filename, "/Users/che4ve/MAI/Labs/KP-7/input.txt", MAX_LEN);
+        strncpy(filename, argv[1], MAX_LEN);
         inputStream = fopen(filename, "r");
         if (inputStream == NULL) {
             perror("Error");
