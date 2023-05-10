@@ -5,7 +5,7 @@
 
 // function prototypes
 StudentPC* newPC();
-void csv_read(StudentPC* pc, char* buffer);
+int csv_read(StudentPC* pc, char* buffer);
 
 typedef struct _record {
     char Surname[SPEC_SIZE];
@@ -38,7 +38,7 @@ void convert_file(char* filename)
     } else {
         strcpy(basename, filename);
     }
-    char* file_bin = _strdup(basename);
+    char* file_bin = strdup(basename);
     strcat(file_bin, ".bin");
 
     // Open the binary file for writing

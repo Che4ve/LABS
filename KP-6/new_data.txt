@@ -1,0 +1,45 @@
+Miller,3,AMD Ryzen 5|AMD Ryzen 7|AMD Ryzen 5,32GB,RTX 1080,32GB,1,3TB,7,Windows 8
+Garcia,1,AMD Ryzen 3,16GB,RTX 1050,32GB,1,5TB,8,Ubuntu
+Gonzalez,1,Intel Core i9,16GB,RTX 3090,4GB,1,3TB,5,Windows 10
+Taylor,1,AMD Ryzen 7,8GB,RTX 2070,8GB,1,1TB,1,Windows 10
+Wayne,1,Intel Core i5,8GB,RTX 1060,8GB,1,8TB,5,Fedora
+Miller,3,Intel Core i5|AMD Ryzen 5|Intel Core i7,2GB,RTX 3060,16GB,4,8TB|2TB|7TB|3TB,6,Windows 11
+Smith,3,AMD Ryzen 9|Intel Core i3|AMD Ryzen 3,32GB,RTX 2080,8GB,1,1TB,14,Debian
+Hernandez,1,Intel Core i3,8GB,RTX 3080,32GB,4,5TB|6TB|5TB|2TB,11,Windows 10
+Simpson,3,AMD Ryzen 3|AMD Ryzen 5|AMD Ryzen 5,16GB,RTX 3060,16GB,2,5TB|1TB,5,Fedora
+Garcia,1,Intel Core i3,16GB,RTX 3060,16GB,2,2TB|2TB,1,Windows 8
+Gonzalez,1,Intel Core i9,16GB,RTX 1070,16GB,3,9TB|8TB|1TB,7,Ubuntu
+Gonzalez,3,AMD Ryzen 5|AMD Ryzen 5|AMD Ryzen 3,16GB,RTX 3060,8GB,1,1TB,14,Windows 8
+Brown,2,AMD Ryzen 7|Intel Core i5,32GB,RTX 3060,2GB,1,2TB,1,Windows 7
+Jones,1,AMD Ryzen 9,32GB,RTX 2080,32GB,1,4TB,11,Ubuntu
+Miller,3,AMD Ryzen 9|AMD Ryzen 9|Intel Core i7,32GB,RTX 1050,32GB,3,1TB|2TB|6TB,4,Debian
+Williams,1,AMD Ryzen 5,16GB,RTX 1070,16GB,1,9TB,2,Windows 10
+Chesnokov,3,Intel Core i3|AMD Ryzen 5|AMD Ryzen 5,16GB,RTX 3080,32GB,3,8TB|5TB|8TB,7,Fedora
+Smith,1,AMD Ryzen 9,32GB,RTX 1080,32GB,3,2TB|1TB|6TB,8,Ubuntu
+Rodriguez,1,AMD Ryzen 3,8GB,RTX 4080,16GB,1,5TB,5,Fedora
+Wilson,1,AMD Ryzen 9,32GB,RTX 2070,4GB,1,6TB,11,Debian
+Wayne,1,Intel Core i5,32GB,RTX 3080,32GB,2,3TB|7TB,3,Windows 11
+Jones,3,Intel Core i3|Intel Core i9|Intel Core i9,32GB,RTX 3060,32GB,4,8TB|8TB|5TB|8TB,9,Windows 11
+Taylor,2,Intel Core i7|Intel Core i3,16GB,RTX 1050,2GB,1,1TB,1,Windows 10
+Taylor,1,AMD Ryzen 3,32GB,RTX 3070,16GB,1,7TB,4,Debian
+Wilson,1,Intel Core i3,2GB,RTX 4090,32GB,1,7TB,1,Windows 8
+Gonzalez,1,AMD Ryzen 7,16GB,RTX 1080,32GB,1,1TB,2,Fedora
+Lopez,1,Intel Core i9,16GB,RTX 2070,32GB,3,3TB|1TB|8TB,4,Windows 10
+Wilson,1,Intel Core i3,16GB,RTX 3080,32GB,1,7TB,3,Debian
+Chesnokov,1,AMD Ryzen 9,16GB,RTX 1070,32GB,1,9TB,13,Windows 8
+Wilson,2,Intel Core i7|AMD Ryzen 3,32GB,RTX 4090,32GB,2,7TB|2TB,10,Ubuntu
+Chesnokov,2,AMD Ryzen 7|AMD Ryzen 5,32GB,RTX 3060,32GB,2,4TB|1TB,13,Windows 8
+Brown,1,Intel Core i5,32GB,RTX 1060,16GB,4,9TB|5TB|7TB|2TB,5,Windows 10
+Chesnokov,1,AMD Ryzen 3,2GB,RTX 2060,32GB,3,9TB|7TB|3TB,13,Ubuntu
+Wilson,3,AMD Ryzen 7|Intel Core i3|AMD Ryzen 5,8GB,RTX 2080,32GB,2,6TB|1TB,1,Windows 8
+Miller,1,AMD Ryzen 3,16GB,RTX 2060,32GB,1,7TB,7,Debian
+Simpson,1,AMD Ryzen 3,32GB,RTX 1050,32GB,4,7TB|8TB|9TB|1TB,10,Debian
+Miller,3,AMD Ryzen 7|AMD Ryzen 7|Intel Core i7,32GB,RTX 4090,32GB,4,4TB|7TB|7TB|4TB,4,Windows 7
+Williams,1,Intel Core i3,16GB,RTX 2080,32GB,2,3TB|5TB,9,Windows 10
+Brown,1,Intel Core i5,16GB,RTX 3080,8GB,1,2TB,2,Ubuntu
+Smith,2,Intel Core i9|AMD Ryzen 7,16GB,RTX 1070,32GB,1,5TB,3,Debian
+Williams,3,AMD Ryzen 9|Intel Core i9|Intel Core i7,16GB,RTX 2060,8GB,3,1TB|6TB|3TB,11,Fedora
+Smith,1,Intel Core i9,8GB,RTX 4090,16GB,4,9TB|4TB|1TB|5TB,9,Windows 10
+Williams,2,AMD Ryzen 5|Intel Core i3,32GB,RTX 1080,16GB,3,7TB|8TB|3TB,9,Windows 7
+Chesnokov,3,Intel Core i3|AMD Ryzen 7|Intel Core i7,32GB,RTX 3090,32GB,1,9TB,9,Ubuntu
+Taylor,1,AMD Ryzen 9,32GB,RTX 2070,2GB,4,5TB|4TB|9TB|4TB,10,Windows 10

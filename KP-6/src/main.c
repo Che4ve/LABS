@@ -321,6 +321,7 @@ int main(int argc, char *argv[])
             }
         }
         else if (strcmp(action, "add") == 0) {
+            /*
             FILE* f_edit = open(filename, "a");
             if (f_edit == NULL) {
                 perror("Error");
@@ -331,6 +332,7 @@ int main(int argc, char *argv[])
             char* name = get_name(new_pc);
             add_considered(new_pc, considered_stud, &considered_count, pc_table);
             ht_insert(pc_table, name, new_pc);
+            */
         }
         else if (strcmp(command, "remove") == 0) {
             

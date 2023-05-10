@@ -15,7 +15,7 @@ CONV_OUT = conv.out
 
 
 
-all: 
+all:
 	$(CC) $(CFLAGS) $(MAIN_SRC) -o $(MAIN_OUT)
 	$(CC) $(GEN_SRC) -o $(GEN_OUT)
 	$(CC) $(CONV_SRC) -o $(CONV_OUT)

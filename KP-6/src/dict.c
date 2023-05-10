@@ -68,10 +68,11 @@ uint hash(HashTable* ht, const char* key)
     uint index = 5381;
     uint key_len = strlen(key); 
     uint table_size = ht->size;
-    int c;
+    int c = *key++;
     //djb2 algorithm
-    while (c = *key++) {
+    while (c) {
         index = ((index << 5) + index) + c;
+        c = *key++;
     }
     
     return index % table_size;
