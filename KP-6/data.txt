@@ -1,5 +1,0 @@
-Rodriguez,3,Intel Core i5|AMD Ryzen 7|AMD Ryzen 7,16GB,RTX 4080,32GB,1,9TB,11,Windows 10
-Chesnokov,3,AMD Ryzen 5|AMD Ryzen 5|Intel Core i7,8GB,RTX 3070,32GB,2,4TB|8TB,9,Windows 10
-Smith,3,AMD Ryzen 7|Intel Core i5|AMD Ryzen 5,32GB,RTX 4080,16GB,3,5TB|2TB|2TB,3,Windows 7
-Garcia,1,Intel Core i9,16GB,RTX 2070,32GB,1,4TB,9,Windows 11
-Chesnokov,3,AMD Ryzen 5|AMD Ryzen 5|Intel Core i7,16GB,RTX 3070,32GB,2,4TB|8TB,9,Windows 10
