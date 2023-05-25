@@ -77,14 +77,20 @@ int main(int argc, char** argv)
     sparseMatrix** matrixList = calloc( MAX_SIZE, sizeof(sparseMatrix*) );
 
     if ( isFile ) {
-        
         while ( true ) {
             sparseMatrix* matrix = initSparseMatrix();
-            if ( !readSparseMatrix(matrix, inputStream) ) {
+            int readRet = 0;
+            readRet = readSparseMatrix(matrix, inputStream);
+            if ( readRet != 1 ) {
+                if ( readRet == -3 ) { // Matrix was too big
+                    freeSparseMatrix(matrix);
+                    continue;
+                }
                 break;
             }
             addToList(matrixList, matrix);
         }
+        fclose(inputStream);
     } 
     int option;
     do {
@@ -181,5 +187,6 @@ int main(int argc, char** argv)
         freeSparseMatrix(matrixList[i]);
     }
     free(matrixList);
+    
     return 0;
 }

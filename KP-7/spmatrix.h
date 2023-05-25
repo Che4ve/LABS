@@ -6,7 +6,8 @@
 #include <string.h>
 #include <errno.h>
 
-#define MAX_VECTOR_SIZE 220
+#define VECTOR_DEFAULT_SIZE 20
+#define VECTOR_MAX_ELEMENTS 100
 
 typedef union {
     int row;
@@ -21,6 +22,7 @@ typedef struct {
 typedef struct _sparse_matrix {
     vectorElement* vector;
     int vectorSize;
+    size_t vectorAllocatedSize;
     int rows, cols;
     int (*pushBack)(struct _sparse_matrix*, int, int, double);
 } sparseMatrix;
