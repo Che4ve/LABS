@@ -1,5 +1,5 @@
 {
     "files.associations": {
-        "globals.h": "c"
+        "ctype.h": "c"
     }
 }

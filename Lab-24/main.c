@@ -1,15 +1,19 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "globals.h"
-
-void math_parse(char* input_s)
-{
-    
-}
+#include "mathparser.h"
 
 int main(int argc, char** argv)
 {
-    char input_s[MAX_LEN];
-    
+    char inputS[MAX_LEN];
+    printf("Enter expression: ");
+    fgets(inputS, MAX_LEN, stdin);
+    rpnQueue* output = parseExpr(inputS);
+    syntaxTree* ast = buildSyntaxTree(output);
+    simplifyTree(ast, ast->root);
+    char* infixExpr = toInfix(ast->root, true);
+    printf("%s\n", infixExpr);
+    free(infixExpr);
     return 0;
 }
