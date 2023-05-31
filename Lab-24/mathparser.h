@@ -8,11 +8,11 @@
 #include <stdbool.h>
 #include "globals.h"
 
-#define MAX_STACK_SIZE 100
+#define MAX_STACK_SIZE 250
 
 typedef enum {
     ADDITION          = 1,         
-    SUBTRACTION      = 2,     
+    SUBTRACTION       = 2,     
     MULTIPLICATION    = 3,   
     DIVISION          = 4,         
     EXPONENTIATION    = 5,    
@@ -32,7 +32,7 @@ typedef struct {
         char variable;
         operatorType oper;
     } data;
-    //double varCoeff;
+    double varCoeff;
 } exprElement;
 
 void printExprElement(exprElement element);
@@ -45,6 +45,8 @@ typedef struct {
 } rpnQueue;
 
 rpnQueue* parseExpr(char* inputStr);
+
+void freeRpnQueue(rpnQueue* rpn);
 
 typedef struct _treeNode {
     struct _treeNode* parent;
@@ -59,23 +61,33 @@ typedef struct {
 
 treeNode* initTreeNode(exprElement data, treeNode* parent);
 
-int isValueNode(treeNode* node);
+void freeTree(treeNode* root);
 
-int isVariableNode(treeNode* node);
+void freeChildren(treeNode* node);
+
+bool isOperatorNode(treeNode* node);
+
+bool isValueNode(treeNode* node);
+
+bool isVariableNode(treeNode* node);
 
 syntaxTree* buildSyntaxTree(rpnQueue* rpn);
 
 bool isLeaf(treeNode* node);
 
-treeNode* findLowestSubtree(treeNode* root);
+bool isRightOperand(treeNode* node);
+
+bool isZeroNode(treeNode* node);
 
 exprElement evaluate(treeNode* node);
+
+int reduceSimilarTerms(treeNode* node);
 
 void simplifyTree(syntaxTree* tree, treeNode* root);
 
 void printTree(treeNode* root, int indent);
 
-char* toInfix(treeNode* root, bool evaluate);
+char* toInfix(treeNode* root, operatorType prevOper);
 
 #endif /* __STRMATH_H__ */
 

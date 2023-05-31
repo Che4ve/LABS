@@ -1,4 +1,4 @@
-#include "mathparser.h"
+﻿#include "mathparser.h"
 
 operatorType getOperator(char op)
 {
@@ -35,7 +35,15 @@ void printExprElement(exprElement element)
             printf("%.1lf", element.data.value);
             break;
         case VARIABLE: 
-            printf("%c", element.data.variable);
+            if (element.varCoeff == 1.0) {
+                printf("%c", element.data.variable);
+            }
+            else if (element.varCoeff == 0.0) {
+                printf("0");
+            }
+            else {
+                printf("%.1lf*%c", element.varCoeff, element.data.variable);
+            }
             break;
         case OPERATOR: 
             printf("%c", operatorToChar(element.data.oper));
@@ -99,7 +107,6 @@ rpnQueue* parseExpr(char* inputStr)
 {
     int len = 0;
     for(len; inputStr[len] != '\0'; ++len);
-    printf("Length of string: %d\n", len);
 
     operatorType operatorStack[MAX_STACK_SIZE];
     int stackTop = -1;
@@ -136,7 +143,8 @@ rpnQueue* parseExpr(char* inputStr)
         if ( isalpha(*currentPtr) ) { // VARIABLE
             outputQueue->queue[++queueTop]= (exprElement)\
                                             { VARIABLE, \
-                                              .data.variable = *currentPtr };
+                                              .data.variable = *currentPtr,
+                                              .varCoeff = 1.0 };
             continue;
         }
         char* valueEndPtr;
@@ -156,11 +164,14 @@ rpnQueue* parseExpr(char* inputStr)
                                            .data.oper = curOperator };
     }
     outputQueue->size = queueTop + 1;
-    for (int i = 0; i <= queueTop; i++) {
-        printExprElement(outputQueue->queue[i]);
-        printf(", ");
-    }
     return outputQueue;
+}
+
+void freeRpnQueue(rpnQueue* rpn)
+{
+    if (rpn == NULL) return;
+    free(rpn->queue);
+    free(rpn);
 }
 
 treeNode* initTreeNode(exprElement data, treeNode* parent)
@@ -174,15 +185,46 @@ treeNode* initTreeNode(exprElement data, treeNode* parent)
     return node;
 }
 
-int isValueNode(treeNode* node)
+void freeTree(treeNode* root)
 {
-    if (node == NULL) return -1;
+    if (root == NULL) return;
+    freeTree(root->leftChild);
+    freeTree(root->rightChild);
+    root->leftChild = NULL;
+    root->rightChild = NULL;
+    free(root);
+    return;
+}
+
+void freeChildren(treeNode* node)
+{
+    if (node == NULL) return;
+    if (node->leftChild != NULL) {
+        freeTree(node->leftChild);
+        node->leftChild = NULL;
+    }
+    if (node->rightChild != NULL) {
+        freeTree(node->rightChild);
+        node->rightChild = NULL;
+    }
+    return;
+}
+
+bool isOperatorNode(treeNode* node)
+{
+    if (node == NULL) return false;
+    return node->content.type == OPERATOR;
+}
+
+bool isValueNode(treeNode* node)
+{
+    if (node == NULL) return false;
     return node->content.type == VALUE;
 }
 
-int isVariableNode(treeNode* node)
+bool isVariableNode(treeNode* node)
 {
-    if (node == NULL) return -1;
+    if (node == NULL) return false;
     return node->content.type == VARIABLE;
 }
 
@@ -213,8 +255,6 @@ syntaxTree* buildSyntaxTree(rpnQueue* rpn)
             currentNode = currentNode->parent;
         }
     }
-    printf("\n===\n");
-    printTree(tree->root, 0);
     return tree;
 }
 
@@ -226,97 +266,309 @@ bool isLeaf(treeNode* node)
     return (lNode == NULL && rNode == NULL);
 }
 
-treeNode* findLowestSubtree(treeNode* root) 
+bool isRightOperand(treeNode* node)
 {
-    typedef struct {
-        treeNode* ptr;
-        int level;
-    } stackElem;
-
-    treeNode* result = NULL;
-    stackElem stack[MAX_STACK_SIZE];
-    int top = -1;
-    int level = 0;
-    int maxLevel = level;
-
-    stack[++top] = (stackElem){ root, level };
-
-    while (top >= 0) {
-        int prevTop = top;
-        stackElem curElem = stack[top--];
-        treeNode* node = curElem.ptr;
-        int level = curElem.level;
-
-        treeNode* lNode = node->leftChild;
-        treeNode* rNode = node->rightChild;
-        if (lNode != NULL) {
-            stack[++top] = (stackElem){lNode, level + 1};
-        }
-        if (rNode != NULL) {
-            stack[++top] = (stackElem){rNode, level + 1};
-        }  
-        if (isLeaf(lNode) && isLeaf(rNode)) {
-            if (level >= maxLevel) {
-                maxLevel = level;
-                result = node;
-            }
-        }
+    if (node == NULL || node->parent == NULL) {
+        return false;
     }
-    return result;
+    treeNode* parent = node->parent;
+    return parent->rightChild == node;
 }
 
-exprElement _eval(treeNode* node)
+bool isZeroNode(treeNode* node)
 {
-    if (node == NULL) return NULL;
-
+    if (node == NULL) return false;
+    exprElement expr = node->content;
+    if (expr.type == VALUE && expr.data.value == 0.0) {
+        return true;
+    }
+    if (expr.type == VARIABLE && expr.varCoeff == 0.0) {
+        return true;
+    }
+    return false;
 }
-
 
 exprElement evaluate(treeNode* node)
 {
-    typedef struct {
-        double coefficient;
-        exprElement var;
-    } variableType;
+    if (isValueNode(node)) {
+        return node->content; 
+    }
+    if (isVariableNode(node)) {
+        return node->content;
+    }   
+
     treeNode* lNode = node->leftChild;
     treeNode* rNode = node->rightChild;
-    bool bothValues = isValueNode(lNode) && isValueNode(rNode);
-    bool varAndValue = (isValueNode(lNode) && isVariableNode(rNode)) ||
-                       (isVariableNode(lNode) && isValueNode(rNode));
     
+    exprElement evaluatedExpr;
+    exprElement lhs = evaluate(lNode);
+    exprElement rhs = evaluate(rNode);
+    operatorType op = node->content.data.oper;
+
+    //
+    bool bothValues    =  lhs.type == VALUE    && rhs.type == VALUE;
+    //
+    bool varAndValue   = (lhs.type == VARIABLE && rhs.type == VALUE) ||
+                         (lhs.type == VALUE    && rhs.type == VARIABLE);
+    //                    
+    bool bothVariables = (lhs.type == VARIABLE && rhs.type == VARIABLE) &&
+                         (lhs.data.variable == rhs.data.variable);
+    //
     if (bothValues) {
-        operatorType op = node->content.data.oper;
-        double lhs = lNode->content.data.value;
-        double rhs = rNode->content.data.value;
-        exprElement result;
-        result.type = VALUE;
+        double lValue = lhs.data.value;
+        double rValue = rhs.data.value;
+        evaluatedExpr.type = VALUE;
         switch (op) {
             case ADDITION:
-                result.data.value = lhs + rhs;
+                evaluatedExpr.data.value = lValue + rValue;
                 break;
             case SUBTRACTION:
-                result.data.value = lhs - rhs;
+                evaluatedExpr.data.value = lValue - rValue;
                 break;
             case MULTIPLICATION:
-                result.data.value = lhs * rhs;
+                evaluatedExpr.data.value = lValue * rValue;
                 break;
             case DIVISION:
-                result.data.value = lhs / rhs;
+                evaluatedExpr.data.value = lValue / rValue;
                 break;
             default:
                 break;
         }
-        return result;
+        node->content = evaluatedExpr;
+        freeChildren(node);
     }
+    //
     if (varAndValue) {
-
+        double value;
+        char var;
+        exprElement varExpr;
+        if (lhs.type == VALUE) {
+            value = lhs.data.value;
+            var = rhs.data.variable;
+            varExpr = rhs;
+        }
+        else {
+            value = rhs.data.value;
+            var = lhs.data.variable;
+            varExpr = lhs;
+        }
+        evaluatedExpr.type = VARIABLE;
+        evaluatedExpr.data.variable = var;
+        switch (op) {
+            case ADDITION:
+                if (value == 0.0) {
+                    node->content = varExpr;
+                    freeChildren(node);
+                }
+                break;
+            case SUBTRACTION:
+                if (value == 0.0) {
+                    if (lhs.type == VALUE) {
+                        varExpr.varCoeff = -varExpr.varCoeff;
+                    }
+                    node->content = varExpr;
+                    freeChildren(node);
+                }
+                break;
+            case MULTIPLICATION:
+                evaluatedExpr.varCoeff = value;
+                node->content = evaluatedExpr;
+                freeChildren(node);
+                break;
+            case DIVISION:
+                evaluatedExpr.varCoeff = 1.0 / value;
+                node->content = evaluatedExpr;
+                freeChildren(node);
+                break;
+            default:
+                break;
+        }
     }
+    //
+    if (bothVariables) {
+        char var = lhs.data.variable;
+        double lCoeff = lhs.varCoeff;
+        double rCoeff = rhs.varCoeff;
+        evaluatedExpr.type = VARIABLE;
+        evaluatedExpr.data.variable = var;
+        switch (op) {
+            case ADDITION:
+                evaluatedExpr.varCoeff = lCoeff + rCoeff;
+                node->content = evaluatedExpr;
+                freeChildren(node);
+                break;
+            case SUBTRACTION:
+                evaluatedExpr.varCoeff = lCoeff - rCoeff;
+                node->content = evaluatedExpr;
+                freeChildren(node);
+                break;
+            default:
+                break;
+        }
+    }
+    //
+    
+    return node->content;
 }
 
+int reduceSimilarTerms(treeNode* root)
+{
+    treeNode* stack[MAX_STACK_SIZE];
+    int top = -1;
+
+    operatorType curOper = UNKNOWN_OPERATOR;
+    bool isAppropriate = false;
+    
+    operatorType firstOper  = UNKNOWN_OPERATOR;
+    operatorType secondOper = UNKNOWN_OPERATOR;
+    operatorType prevOper   = UNKNOWN_OPERATOR;
+
+    unsigned int uniqueSymbols = 0;
+    int symbCount = 0;
+    unsigned int curSymbolMask = 0;
+
+    treeNode* firstVarNode = NULL;
+    char firstSymbol;
+    treeNode* secondVarNode = NULL;
+    char secondSymbol;
+
+    bool isSubtraction = false;
+
+    do {
+        stack[++top] = root;
+        while (top >= 0) {
+            treeNode* node = stack[top--];
+            treeNode* lNode = node->leftChild;
+            treeNode* rNode = node->rightChild;
+
+            exprElement expr = node->content;
+            if (expr.type == OPERATOR) {
+                prevOper = curOper;
+                curOper = expr.data.oper;
+            }
+            isAppropriate = curOper == ADDITION || curOper == SUBTRACTION;
+
+            if (lNode != NULL && isAppropriate) {
+                stack[++top] = lNode;
+            }
+            if (rNode != NULL && isAppropriate) {
+                stack[++top] = rNode;
+            }
+            if (isVariableNode(node)) {
+                char var = node->content.data.variable;
+                unsigned int symbol = 1u << (var - 'a');
+                bool isUnique = (symbol & uniqueSymbols) == 0;
+
+                if (firstVarNode == NULL && isUnique) {
+                    uniqueSymbols |= symbol;
+                    symbCount++;
+                    firstVarNode = node;
+                    curSymbolMask = symbol;
+                    firstOper = curOper;
+                }
+                else {
+                    secondVarNode = node;
+                    if (firstVarNode == NULL) {
+                        continue;
+                    }
+                    firstSymbol = firstVarNode->content.data.variable;
+                    secondSymbol = secondVarNode->content.data.variable;
+                    if (firstSymbol == ' ' || secondSymbol == ' ') {
+                        continue;
+                    }
+                    if (firstSymbol == secondSymbol) {
+                        secondOper = curOper;
+                        break;
+                    }
+                }
+            }
+            secondVarNode = NULL;
+        }
+
+        if (firstVarNode != NULL && secondVarNode != NULL) {
+            exprElement evaluatedExpr;
+            double lCoeff = firstVarNode->content.varCoeff;
+            double rCoeff = secondVarNode->content.varCoeff;
+            evaluatedExpr.type = VARIABLE;
+            evaluatedExpr.data.variable = firstSymbol;
+
+            if (isRightOperand(firstVarNode)) {
+                if (firstOper == SUBTRACTION) {
+                    isSubtraction = !isSubtraction;
+                }
+            }
+            else {
+                if (prevOper == SUBTRACTION) {
+                    isSubtraction = !isSubtraction;
+                    prevOper = UNKNOWN_OPERATOR;
+                }
+            }
+
+            if (isRightOperand(secondVarNode)) {
+                if (secondOper == SUBTRACTION) {
+                    isSubtraction = !isSubtraction;
+                }
+            }
+            else {
+                if (prevOper == SUBTRACTION) {
+                    isSubtraction = !isSubtraction;
+                    prevOper = UNKNOWN_OPERATOR;
+                }
+            }
+
+            if (isSubtraction) {
+                evaluatedExpr.varCoeff = lCoeff - rCoeff;
+                firstVarNode->content = evaluatedExpr;
+            }
+            else {
+                evaluatedExpr.varCoeff = lCoeff + rCoeff;
+                firstVarNode->content = evaluatedExpr;
+            }
+            secondVarNode->content.type = VALUE;
+            secondVarNode->content.data.value = 0.0;
+            secondVarNode->content.varCoeff = 0.0;
+
+            uniqueSymbols &= ~curSymbolMask;
+        }
+
+        firstVarNode = NULL;
+        secondVarNode = NULL;
+        isSubtraction = false;
+    } while (symbCount-- > 0);
+
+    return 0;
+}
+ 
 void simplifyTree(syntaxTree* tree, treeNode* root)
 {
-    treeNode* lowestExpr = findLowestSubtree(root); 
-    //evaluate(tree, root);
+    evaluate(root);
+    treeNode* stack[MAX_STACK_SIZE];
+    int top = -1;
+    stack[++top] = root;
+    operatorType curOper = UNKNOWN_OPERATOR;
+    while (top >= 0) {
+        treeNode* node = stack[top--];
+        treeNode* lNode = node->leftChild;
+        treeNode* rNode = node->rightChild;
+
+        if (lNode != NULL) {
+            stack[++top] = lNode;
+        }
+        if (rNode != NULL) {
+            stack[++top] = rNode;
+        }
+
+        exprElement expr = node->content;
+        if (expr.type == OPERATOR) {
+            curOper = expr.data.oper;
+        }
+        bool isAppropriate = curOper == ADDITION || curOper == SUBTRACTION;
+
+        if (isAppropriate) {
+            reduceSimilarTerms(node);
+        }
+    }
+    evaluate(root);
 }
 
 void printTree(treeNode* root, int indent) 
@@ -342,26 +594,46 @@ void printTree(treeNode* root, int indent)
     return;
 }
 
-char* toInfix(treeNode* root, bool evaluate)
+char* toInfix(treeNode* root, operatorType prevOper)
 {
     char* result = malloc(MAX_LEN * sizeof(char));
     exprElement mid = root->content;
-
+    
     if (isValueNode(root)) {
-        sprintf(result, "%.1lf", mid.data.value);
+        if (root->content.data.value < 0) {
+            sprintf(result, "(%.1lf)", mid.data.value);
+        }
+        else {
+            sprintf(result, "%.1lf", mid.data.value);
+        }
         return result;
     }
     if (isVariableNode(root)) {
-        sprintf(result, "%c", mid.data.variable);
+        if (mid.varCoeff == 1.0) {
+            sprintf(result, "%c", mid.data.variable);
+        }
+        else if (mid.varCoeff == 0.0) {
+            sprintf(result, "0");
+        }
+        else if (mid.varCoeff < 0) {
+            sprintf(result, "(%.1lf*%c)", mid.varCoeff, mid.data.variable);
+        }
+        else {
+            sprintf(result, "%.1lf*%c", mid.varCoeff, mid.data.variable);
+        }
         return result;
     }
 
     char op = operatorToChar(mid.data.oper);
+    char* lhs = toInfix(root->leftChild, op);
+    char* rhs = toInfix(root->rightChild, op);
 
-    char* lhs = toInfix(root->leftChild, evaluate);
-    char* rhs = toInfix(root->rightChild, evaluate);
-
-    sprintf(result, "(%s %c %s)", lhs, op, rhs);
+    if (prevOper == '+' || prevOper == '-' || prevOper == 0) {
+        sprintf(result, "%s %c %s", lhs, op, rhs);
+    }
+    else {
+        sprintf(result, "(%s %c %s)", lhs, op, rhs);
+    }
 
     free(lhs);
     free(rhs);
