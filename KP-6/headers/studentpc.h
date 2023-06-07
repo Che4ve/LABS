@@ -17,22 +17,14 @@ typedef struct _key_spec {
 } KeySpec;
 
 typedef struct _studentpc {
-    // Name
     char* name;
-    // CPU
     int cpu_num;
     char* cpus;
-    // RAM
     int ram;
-    // GPU
     char* gpu;
-    // VRAM
     int vram;
-    // HDD
     int hdd_num;
-    // HDDS
     char* hdds;
-    // Devices
     int device_num;
     // Operating System
     char* os;

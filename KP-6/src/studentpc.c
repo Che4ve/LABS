@@ -272,7 +272,7 @@ int pc_print_table(HashTable* ht)
             spec_list[MAX_LEN - 1] = '\0';
             specstostr(pc, spec_list, MAX_LEN);
             printf("|| %10s || %30s\n", name, spec_list);
-            current_node = get_next(current_node);
+            current_node = ht_get_next(current_node);
         } while (current_node != NULL);
     }
     if (ret) {

@@ -22,12 +22,11 @@ HashTable* createTable(int table_size);
 
 HashNode* newNode(void* value_p);
 
-
 void* get_value(HashNode* node);
 
-HashNode* get_next(HashNode* node);
+HashNode* ht_get_next(HashNode* node);
 
-HashNode* get_last(HashNode* node);
+HashNode* ht_get_last(HashNode* node);
 
 uint hash(HashTable* ht, const char* key);
 

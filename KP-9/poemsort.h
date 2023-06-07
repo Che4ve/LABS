@@ -32,7 +32,7 @@ typedef enum {
 
 sortType getSortType(Lines arr, size_t size);
 
-int findInPoem(Lines arr, double key, size_t leftBound, size_t rightBound);
+int findInPoem(Lines arr, double key, size_t leftBound, size_t rightBound, sortType type);
 
 int readPoem(FILE *fp, Lines arr);
 

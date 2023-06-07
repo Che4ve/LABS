@@ -7,19 +7,6 @@
 StudentPC* newPC();
 int csv_read(StudentPC* pc, char* buffer);
 
-typedef struct _record {
-    char Surname[SPEC_SIZE];
-    int ProcessorsNumber;
-    char CPUs[SPEC_SIZE];
-    int Memory;
-    char NvidiaGPU[SPEC_SIZE];
-    int GraphicalMemory;
-    int HDDsNumber;
-    char HDDs[SPEC_SIZE];
-    int DevicesNumber;
-    char OS[SPEC_SIZE];
-} Record;
-
 int convert_file(char* filename)
 {
     char* extension = strrchr(filename, '.');

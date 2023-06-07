@@ -103,7 +103,7 @@ void removeEveryKthElement(LinearList* list, size_t k)
         fprintf(stderr, "Error: Inappropriate step.\n");
         return;
     }
-    for (size_t i = 0; i < getSize(list); i += k - 1) {
+    for (int i = 0; i < getSize(list); i += k - 1) {
         removeElement(list, i);
     }
     return;

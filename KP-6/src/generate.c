@@ -84,7 +84,6 @@ int generate_file(char* filename)
         perror("Error");
         exit(ENOENT);
     }
-    //fprintf(fp, "%s\n", Properties); <-- Properties print
     int iter_num = rand() % MAX_STUDENTS;
     iter_num = max(iter_num, 1);
     for (int i = 0; i < iter_num; i++) {

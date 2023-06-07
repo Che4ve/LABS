@@ -24,7 +24,6 @@ typedef struct _sparse_matrix {
     int vectorSize;
     size_t vectorAllocatedSize;
     int rows, cols;
-    int (*pushBack)(struct _sparse_matrix*, int, int, double);
 } sparseMatrix;
 
 static const vectorElement NilElem = { 0, {0} };

@@ -394,6 +394,7 @@ int fremove_student_bin(const char* filename, const char* name)
         return 0; // success
     }
 }
+
 void print_menu() {
     printf("    result - display the result.\n");
     printf("    add [(Surname),(Number of CPUs),(CPUs {use '|' to split them}),(RAM size),(GPU),(Number of HDDs),(HDD sizes {use '|' to split them}),(number of peripherals),(OS)] - add a student.\n");

@@ -13,6 +13,7 @@ void startMenu(void)
     printf("    0. Quit.\n");
 }
 
+
 int main(int argc, char** argv)
 {
     if (argc != 2 || argv[1] == NULL) {
@@ -26,26 +27,38 @@ int main(int argc, char** argv)
     fp = fopen(filename, "r");
 
     Lines initialPoem = calloc(MAX_SIZE, sizeof(DataLine*));
-    Lines sortedPoem = calloc(MAX_SIZE, sizeof(DataLine*));
+    Lines sortedPoem;
 
     int poemLen = readPoem(fp, initialPoem);
-
-    for (int i = 0; i < poemLen; i++) {
-        sortedPoem[i] = initialPoem[i];
+    sortType type = getSortType(initialPoem, poemLen);
+    
+    if (type == ASCENDING || type == DESCENDING) {
+        sortedPoem = initialPoem;
+    }
+    else {
+        sortedPoem = calloc(MAX_SIZE, sizeof(DataLine*));
+        for (int i = 0; i < poemLen; i++) {
+            sortedPoem[i] = initialPoem[i];
+        }
+        quickSort(sortedPoem, poemLen);
     }
 
-    quickSort(sortedPoem, poemLen);
-    
-    
     int choice;
+
+    enum {
+        PRINT_INIT   = 1,
+        PRINT_SORTED = 2,
+        FIND_LINE    = 3,
+        QUIT         = 0
+    };
+
     do {
         startMenu();
         scanf("%d", &choice);
         switch (choice) {
-            case 1: {
+            case PRINT_INIT: {
                 printf("===\n");
                 printPoem(initialPoem, poemLen);
-                sortType type = getSortType(initialPoem, poemLen);
                 switch (type) {
                     case ASCENDING: {
                         printf("<Ascending order>\n");
@@ -63,26 +76,26 @@ int main(int argc, char** argv)
                 printf("===\n");
                 break;
             }
-            case 2: {
+            case PRINT_SORTED: {
                 printf("===\n");
                 printPoem(sortedPoem, poemLen);
                 printf("===\n");
                 break;
             }
-            case 3: {
+            case FIND_LINE: {
                 double key;
                 printf("Enter key: ");
                 scanf("%lf", &key);
-                int found = findInPoem(sortedPoem, key, 0, poemLen - 1);
+                int found = findInPoem(sortedPoem, key, 0, poemLen - 1, type);
                 if (found != -1) {
-                    printf("Line: %s\n", sortedPoem[found]->text);\
+                    printf("Line: %s\n", sortedPoem[found]->text);
                 }
                 else {
                     printf("No such key in the table.\n");
                 }
                 break;
             }
-            case 0: {
+            case QUIT: {
                 burnPoem(initialPoem, poemLen);
                 break;
             }

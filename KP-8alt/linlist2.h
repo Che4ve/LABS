@@ -22,8 +22,7 @@ typedef Node** NodeArray;
 
 typedef struct {
     NodeArray elements; // Массив элементов
-    Node* head; // Барьерный элемент 
-    size_t size; // Размер списка (без учета барьерного элемента)
+    size_t size; // Размер списка
 } LinearList;
 
 typedef int Iterator; // Итератор - индекс элемента в массиве

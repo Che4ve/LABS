@@ -28,7 +28,7 @@ void* get_value(HashNode* node)
     return node->value;
 }
 
-HashNode* get_next(HashNode* node)
+HashNode* ht_get_next(HashNode* node)
 {
     if (node == NULL) {
         return NULL;
@@ -36,11 +36,11 @@ HashNode* get_next(HashNode* node)
     return node->next_node;
 }
 
-HashNode* get_last(HashNode* node) 
+HashNode* ht_get_last(HashNode* node) 
 {
     HashNode* result = node;
-    while (get_next(result) != NULL) {
-        result = get_next(result);
+    while (ht_get_next(result) != NULL) {
+        result = ht_get_next(result);
     }
     return result;
 }
@@ -66,7 +66,7 @@ void ht_insert(HashTable* ht, const char* key, void* pointer)
     HashNode* new_node = newNode(pointer);
     HashNode* found = ht_get_first(ht, key);
     if (found != NULL) { // If collision is detected
-        HashNode* last_node = get_last(found);
+        HashNode* last_node = ht_get_last(found);
         last_node->next_node = new_node;
         return;
     }
@@ -79,14 +79,6 @@ HashNode* ht_get_first(HashTable* ht, const char* key)
     HashNode** table = ht->table;
     int hash_index = hash(ht, key);
     return table[hash_index];
-}
-
-HashNode* ht_get_next(HashNode* node)
-{
-    if (node == NULL) {
-        return NULL;
-    }
-    return node->next_node;
 }
 
 void ht_free(HashTable* ht)
