@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -std=c17
 
-LIBS = linlist2.c
+LIBS = linlist.c
 
 MAIN_SRC = main.c 
 MAIN_OUT = main.out

@@ -1,4 +1,4 @@
-#include "linlist2.h"
+#include "linlist.h"
 
 void initList(LinearList* list) {
     list->elements = (NodeArray)calloc(MAX_SIZE, sizeof(Node));

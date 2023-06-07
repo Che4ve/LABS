@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "linlist2.h"
+#include "linlist.h"
 
 #define MAX_LEN 250
 
