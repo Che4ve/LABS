@@ -1,7 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
-#include "linlist.h"
+#include "linlist2.h"
+
+#define MAX_LEN 250
+
+Complex parseComplexNumber(char* str) 
+{
+    Complex number;
+    char oper = ' ';
+    char* c = str;
+    double real = 0.0;
+    double imaginary = 0.0;
+    int part = 0;
+    while (*c != '\0') {
+        if (*c == '+' || *c == '-') {
+            oper = *c;
+            c++;
+            continue;
+        }
+        char* prev_c = c;
+        double value;
+        value = strtod(c, &c);
+        if (c != prev_c) {
+            if (oper == '-') {
+                value = - value;
+            }
+            if (part == 0) {
+                real = value;
+                part = 1;
+            }
+            else if (part == 1) {
+                imaginary = value;
+                break;
+            }
+            oper = ' ';
+        }
+        c++;
+    }
+    number = (Complex){real, imaginary};
+    return number;
+}
 
 void printMenu() { // функция меню
     printf("1. Add an element.\n");
@@ -15,7 +55,6 @@ void printMenu() { // функция меню
 int main(int argc, char **argv) {
     LinearList list;
     initList(&list);
-
     int choice;
     do {
         printMenu();
@@ -26,14 +65,17 @@ int main(int argc, char **argv) {
         switch (choice) {
             case 1: {
                 int index;
+                char str[MAX_LEN + 1];
+                str[MAX_LEN] = '\0';
                 Complex value;
                 printf("========================\n");
                 printf("Enter the index (array size is %d): ", getSize(&list));
                 scanf("%d", &index);
-                printf("Enter the real part: ");
-                scanf("%lf", &value.real);
-                printf("Enter the imaginary part: ");
-                scanf("%lf", &value.imaginary);
+                getchar();
+                printf("Enter the complex number (e.g., 1 + 3i): ");
+                fgets(str, MAX_LEN, stdin);
+                str[strcspn(str, "\n")] = '\0'; 
+                value = parseComplexNumber(str);
                 insertElement(&list, index, value);
                 break;
             }

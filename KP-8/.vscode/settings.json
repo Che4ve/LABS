@@ -1,10 +1,5 @@
 {
     "files.associations": {
-        "initializer_list": "c",
-        "type_traits": "c",
-        "xstring": "c",
-        "xutility": "c",
-        "linlist.h": "c",
-        "stdlib.h": "c"
+        "linlist2.h": "c"
     }
 }

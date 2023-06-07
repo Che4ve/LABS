@@ -28,8 +28,24 @@ void insertElement(LinearList* list, Iterator iterator, Complex data) {
     }
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->data = data;
-    newNode->next = list->elements[iterator + 1];
-    newNode->prev = list->elements[iterator - 1];
+
+    if (iterator + 1 < list->size) {
+        newNode->next = list->elements[iterator + 1];
+        Node* next = list->elements[iterator + 1];
+        next->prev = newNode;
+    }
+    else {
+        newNode->next = NULL;
+    }
+
+    if (iterator - 1 >= 0) {
+        newNode->prev = list->elements[iterator - 1];
+        Node* prev = list->elements[iterator - 1];
+        prev->next = newNode;
+    }
+    else {
+        newNode->prev = NULL;
+    }
     // Вставляем новый элемент на указанную позицию
     list->elements[iterator] = newNode;
     list->size++;
@@ -44,12 +60,14 @@ void removeElement(LinearList* list, Iterator iterator) {
     Node* node = list->elements[iterator];
     Node* prev = node->prev;
     Node* next = node->next;
-    prev->next = node->next;
-    next->prev = node->prev;
-    free(node);
+    if (prev != NULL) prev->next = node->next;
+    if (next != NULL) next->prev = node->prev;
+    free(list->elements[iterator]);
+    list->elements[iterator] = NULL;
     // Сдвигаем элементы влево, начиная с позиции iterator
     for (int i = iterator; i < list->size - 1; i++) {
         list->elements[i] = list->elements[i + 1];
+        list->elements[i + 1] = NULL;
     }
     list->size--;
 }
@@ -71,6 +89,9 @@ void printList(LinearList* list) {
 void destroyList(LinearList* list)
 {
     if (list == NULL) return;
+    for (int i = 0; i < list->size; i++) {
+        free(list->elements[i]);
+    }
     free(list->elements);
     return;
 }
@@ -82,7 +103,7 @@ void removeEveryKthElement(LinearList* list, size_t k)
         fprintf(stderr, "Error: Inappropriate step.\n");
         return;
     }
-    for (size_t i = 1; i <= getSize(list); i *= k) {
+    for (int i = 0; i < getSize(list); i += k - 1) {
         removeElement(list, i);
     }
     return;

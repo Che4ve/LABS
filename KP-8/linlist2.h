@@ -12,8 +12,8 @@ typedef struct {
 
 typedef struct _node {
     Complex data;
-    _node* next;
-    _node* prev;
+    struct _node* next;
+    struct _node* prev;
 } Node;
 
 #define MAX_SIZE 200 // Максимальный размер списка
@@ -22,11 +22,10 @@ typedef Node** NodeArray;
 
 typedef struct {
     NodeArray elements; // Массив элементов
-    Node* head; // Барьерный элемент 
-    size_t size; // Размер списка (без учета барьерного элемента)
+    size_t size; // Размер списка
 } LinearList;
 
-typedef size_t Iterator; // Итератор - индекс элемента в массиве
+typedef int Iterator; // Итератор - индекс элемента в массиве
 
 void initList(LinearList* list);
 
