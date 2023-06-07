@@ -32,7 +32,12 @@ void printExprElement(exprElement element)
 {
     switch (element.type) {
         case VALUE: 
-            printf("%.1lf", element.data.value);
+            if (element.data.value == 0.0) {
+                printf("0");
+            }
+            else {
+                printf("%.1lf", element.data.value);
+            }
             break;
         case VARIABLE: 
             if (element.varCoeff == 1.0) {
@@ -115,7 +120,7 @@ rpnQueue* parseExpr(char* inputStr)
     outputQueue->size = 0;
     int queueTop = -1;
 
-    for (int i = 0; i < len; i++)  {
+    for (int i = 0; i <= len; i++)  {
         // === MANAGING OUTPUT ===
         int newStackTop = unloadOperatorStack(operatorStack, stackTop);
         if (stackTop != -1 && stackTop != newStackTop) {
@@ -356,17 +361,26 @@ exprElement evaluate(treeNode* node)
         evaluatedExpr.data.variable = var;
         switch (op) {
             case ADDITION:
-                if (value == 0.0) {
-                    node->content = varExpr;
+                if (value == 0.0 || varExpr.varCoeff == 0.0) {
+                    double result = value + varExpr.varCoeff;
+                    evaluatedExpr.type = VALUE;
+                    evaluatedExpr.data.value = result;
+                    node->content = evaluatedExpr;
                     freeChildren(node);
                 }
                 break;
             case SUBTRACTION:
-                if (value == 0.0) {
+                if (value == 0.0 || varExpr.varCoeff == 0.0) {
+                    double result;
                     if (lhs.type == VALUE) {
-                        varExpr.varCoeff = -varExpr.varCoeff;
+                        result = value - varExpr.varCoeff;
                     }
-                    node->content = varExpr;
+                    else {
+                        result = varExpr.varCoeff - value;
+                    }
+                    evaluatedExpr.type = VALUE;
+                    evaluatedExpr.data.value = result;
+                    node->content = evaluatedExpr;
                     freeChildren(node);
                 }
                 break;
@@ -389,16 +403,27 @@ exprElement evaluate(treeNode* node)
         char var = lhs.data.variable;
         double lCoeff = lhs.varCoeff;
         double rCoeff = rhs.varCoeff;
+        double result;
         evaluatedExpr.type = VARIABLE;
         evaluatedExpr.data.variable = var;
         switch (op) {
             case ADDITION:
-                evaluatedExpr.varCoeff = lCoeff + rCoeff;
+                result = lCoeff + rCoeff;
+                evaluatedExpr.varCoeff = result;
+                if (result == 0.0) {
+                    evaluatedExpr.type = VALUE;
+                    evaluatedExpr.data.value = 0.0;
+                }
                 node->content = evaluatedExpr;
                 freeChildren(node);
                 break;
             case SUBTRACTION:
-                evaluatedExpr.varCoeff = lCoeff - rCoeff;
+                result = lCoeff - rCoeff;
+                evaluatedExpr.varCoeff = result;
+                if (result == 0.0) {
+                    evaluatedExpr.type = VALUE;
+                    evaluatedExpr.data.value = 0.0;
+                }
                 node->content = evaluatedExpr;
                 freeChildren(node);
                 break;
@@ -613,7 +638,7 @@ char* toInfix(treeNode* root, operatorType prevOper)
             sprintf(result, "%c", mid.data.variable);
         }
         else if (mid.varCoeff == 0.0) {
-            sprintf(result, "0");
+            sprintf(result, "0.0");
         }
         else if (mid.varCoeff < 0) {
             sprintf(result, "(%.1lf*%c)", mid.varCoeff, mid.data.variable);

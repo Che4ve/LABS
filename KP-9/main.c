@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "poemsort.h"
-
 #define MAX_SIZE 100
-
+ // Function to display the start menu options
 void startMenu(void)
 {
     printf("    1. Print initial poem.\n");
@@ -12,8 +11,6 @@ void startMenu(void)
     printf("    3. Find line by key.\n");
     printf("    0. Quit.\n");
 }
-
-
 int main(int argc, char** argv)
 {
     if (argc != 2 || argv[1] == NULL) {
@@ -25,14 +22,11 @@ int main(int argc, char** argv)
     filename[MAX_LEN - 1] = '\0';
     FILE* fp;
     fp = fopen(filename, "r");
-
     Lines initialPoem = calloc(MAX_SIZE, sizeof(DataLine*));
     Lines sortedPoem;
-
     int poemLen = readPoem(fp, initialPoem);
     sortType type = getSortType(initialPoem, poemLen);
-    
-    if (type == ASCENDING || type == DESCENDING) {
+    if (type != UNSORTED) {
         sortedPoem = initialPoem;
     }
     else {
@@ -42,16 +36,14 @@ int main(int argc, char** argv)
         }
         quickSort(sortedPoem, poemLen);
     }
-
     int choice;
-
+    // Options enumeration
     enum {
         PRINT_INIT   = 1,
         PRINT_SORTED = 2,
         FIND_LINE    = 3,
         QUIT         = 0
     };
-
     do {
         startMenu();
         scanf("%d", &choice);
@@ -96,12 +88,18 @@ int main(int argc, char** argv)
                 break;
             }
             case QUIT: {
-                burnPoem(initialPoem, poemLen);
+                break;
+            }
+            default: {
+                printf("Incorrect input. Try again.\n");
                 break;
             }
         }
-    } while (choice != 0);
-
+    } while (choice != QUIT);
+    burnPoem(initialPoem, poemLen);
+    if (type == UNSORTED) {
+        free(sortedPoem);
+    }
     fclose(fp);
     return 0;
 }

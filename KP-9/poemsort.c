@@ -80,6 +80,9 @@ sortType getSortType(Lines arr, size_t size)
  // Find the index of a key in the given array within the specified bounds
 int findInPoem(Lines arr, double key, size_t leftBound, size_t rightBound, sortType type)
 {
+    if (type == UNSORTED) {
+        type = ASCENDING;
+    }
     const double epsilon = 1E-3;
     int index = (int)(leftBound + rightBound) / 2;
      while (leftBound < rightBound) {
@@ -107,14 +110,19 @@ int readPoem(FILE *fp, Lines arr)
     buffer[MAX_LEN - 1] = '\0';
     int poemLen = 0;
      while (fgets(buffer, MAX_LEN, fp) != NULL) {
-        char* line = strdup(buffer);
+        char* line = malloc(MAX_LEN * sizeof(char));
+        char* textPart;
+        if (line != NULL) {
+            strncpy(line, buffer, MAX_LEN);
+        }
         DataLine* data = initDataLine();    
-        data->key = strtod(line, &line);
-        strncpy(data->text, line + 1, MAX_LEN);
-         if (data->text[0] == '\0') {
+        data->key = strtod(line, &textPart);
+        strncpy(data->text, textPart + 1, MAX_LEN);
+        if (data->text[0] == '\0') {
             break;
         }
-         arr[poemLen++] = data;
+        arr[poemLen++] = data;
+        free(line);
     }
      return poemLen;
 }

@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -std=c17
 
-PARAMETERS = data.txt
+PARAMETERS = data1.txt
 
 LIBS = poemsort.c
 

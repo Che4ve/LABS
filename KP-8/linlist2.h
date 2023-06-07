@@ -18,8 +18,11 @@ typedef struct _node {
 
 #define MAX_SIZE 200 // Максимальный размер списка
 
+typedef Node** NodeArray;
+
 typedef struct {
-    Complex* elements; // Массив элементов
+    NodeArray elements; // Массив элементов
+    Node* head; // Барьерный элемент 
     size_t size; // Размер списка (без учета барьерного элемента)
 } LinearList;
 
