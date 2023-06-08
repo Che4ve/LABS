@@ -1,5 +1,5 @@
 ﻿#include "mathparser.h"
-
+ // Function to get the operator type based on the input character
 operatorType getOperator(char op)
 {
     switch (op) {
@@ -13,7 +13,7 @@ operatorType getOperator(char op)
     }
     return UNKNOWN_OPERATOR;
 }
-
+ // Function to convert an operator type to its corresponding character
 char operatorToChar(operatorType op)
 {
     switch (op) {
@@ -27,7 +27,7 @@ char operatorToChar(operatorType op)
     default: return '$';
     }
 }
-
+ // Function to print the expression element
 void printExprElement(exprElement element)
 {
     switch (element.type) {
@@ -57,14 +57,13 @@ void printExprElement(exprElement element)
             break;
     }
 }
-
+ // Function to unload the operator stack
 int unloadOperatorStack(operatorType* stack, int top)
 {
     if (top <= 0) {
         return top;
     }
-
-    operatorType topOperator = stack[top];
+     operatorType topOperator = stack[top];
     operatorType prevOperator = stack[top - 1];
 
     // IF IS OPERATOR
@@ -107,20 +106,18 @@ int unloadOperatorStack(operatorType* stack, int top)
     }
     return top;
 }
-
+ // Function to parse the input expression string
 rpnQueue* parseExpr(char* inputStr)
 {
     int len = 0;
     for(len; inputStr[len] != '\0'; ++len);
-
-    operatorType operatorStack[MAX_STACK_SIZE];
+     operatorType operatorStack[MAX_STACK_SIZE];
     int stackTop = -1;
     rpnQueue* outputQueue = (rpnQueue*)malloc(sizeof(rpnQueue));
     outputQueue->queue = (exprElement*)calloc(MAX_LEN, sizeof(exprElement));
     outputQueue->size = 0;
     int queueTop = -1;
-
-    for (int i = 0; i <= len; i++)  {
+     for (int i = 0; i <= len; i++)  {
         // === MANAGING OUTPUT ===
         int newStackTop = unloadOperatorStack(operatorStack, stackTop);
         if (stackTop != -1 && stackTop != newStackTop) {
@@ -171,14 +168,14 @@ rpnQueue* parseExpr(char* inputStr)
     outputQueue->size = queueTop + 1;
     return outputQueue;
 }
-
+ // Function to free the memory allocated for the RPN queue
 void freeRpnQueue(rpnQueue* rpn)
 {
     if (rpn == NULL) return;
     free(rpn->queue);
     free(rpn);
 }
-
+ // Function to initialize a tree node
 treeNode* initTreeNode(exprElement data, treeNode* parent)
 {
     treeNode* node = (treeNode*)malloc(sizeof(treeNode));
@@ -189,7 +186,7 @@ treeNode* initTreeNode(exprElement data, treeNode* parent)
     node->content = data;
     return node;
 }
-
+ // Freeing Syntax Tree from memory
 void freeTree(treeNode* root)
 {
     if (root == NULL) return;
@@ -200,7 +197,7 @@ void freeTree(treeNode* root)
     free(root);
     return;
 }
-
+ // Freeing children of the node
 void freeChildren(treeNode* node)
 {
     if (node == NULL) return;
@@ -232,12 +229,13 @@ bool isVariableNode(treeNode* node)
     if (node == NULL) return false;
     return node->content.type == VARIABLE;
 }
-
+ // Building AST with iterative method
 syntaxTree* buildSyntaxTree(rpnQueue* rpn)
 {
     exprElement* queue = rpn->queue;
     int top = rpn->size - 1;
 
+    // Initializing tree itself
     syntaxTree* tree = (syntaxTree*)malloc(sizeof(syntaxTree));
     tree->root = initTreeNode(queue[top--], NULL);
     treeNode* currentNode = tree->root;
@@ -279,7 +277,7 @@ bool isRightOperand(treeNode* node)
     treeNode* parent = node->parent;
     return parent->rightChild == node;
 }
-
+ // Function to check if the value of the element is zero
 bool isZeroNode(treeNode* node)
 {
     if (node == NULL) return false;
@@ -292,7 +290,7 @@ bool isZeroNode(treeNode* node)
     }
     return false;
 }
-
+ // Evaluates numbers and variables of the same parent
 exprElement evaluate(treeNode* node)
 {
     if (isValueNode(node)) {
@@ -318,7 +316,7 @@ exprElement evaluate(treeNode* node)
     //                    
     bool bothVariables = (lhs.type == VARIABLE && rhs.type == VARIABLE) &&
                          (lhs.data.variable == rhs.data.variable);
-    //
+    // VALUE & VALUE
     if (bothValues) {
         double lValue = lhs.data.value;
         double rValue = rhs.data.value;
@@ -342,7 +340,7 @@ exprElement evaluate(treeNode* node)
         node->content = evaluatedExpr;
         freeChildren(node);
     }
-    //
+    // VARIABLE & VALUE
     if (varAndValue) {
         double value;
         char var;
@@ -361,6 +359,7 @@ exprElement evaluate(treeNode* node)
         evaluatedExpr.data.variable = var;
         switch (op) {
             case ADDITION:
+                // a + 0 or 0 + a
                 if (value == 0.0 || varExpr.varCoeff == 0.0) {
                     double result = value + varExpr.varCoeff;
                     evaluatedExpr.type = VALUE;
@@ -370,6 +369,7 @@ exprElement evaluate(treeNode* node)
                 }
                 break;
             case SUBTRACTION:
+                // 0 - a or a - 0
                 if (value == 0.0 || varExpr.varCoeff == 0.0) {
                     double result;
                     if (lhs.type == VALUE) {
@@ -385,20 +385,22 @@ exprElement evaluate(treeNode* node)
                 }
                 break;
             case MULTIPLICATION:
-                evaluatedExpr.varCoeff = value;
+                evaluatedExpr.varCoeff = varExpr.varCoeff * value;
                 node->content = evaluatedExpr;
                 freeChildren(node);
                 break;
             case DIVISION:
-                evaluatedExpr.varCoeff = 1.0 / value;
-                node->content = evaluatedExpr;
-                freeChildren(node);
+                if (rhs.type == VALUE) {
+                    evaluatedExpr.varCoeff = 1.0 / value;
+                    node->content = evaluatedExpr;
+                    freeChildren(node);
+                }
                 break;
             default:
                 break;
         }
     }
-    //
+    // VARIABLE & VARIABLE
     if (bothVariables) {
         char var = lhs.data.variable;
         double lCoeff = lhs.varCoeff;
@@ -407,6 +409,7 @@ exprElement evaluate(treeNode* node)
         evaluatedExpr.type = VARIABLE;
         evaluatedExpr.data.variable = var;
         switch (op) {
+            // a + a
             case ADDITION:
                 result = lCoeff + rCoeff;
                 evaluatedExpr.varCoeff = result;
@@ -417,6 +420,7 @@ exprElement evaluate(treeNode* node)
                 node->content = evaluatedExpr;
                 freeChildren(node);
                 break;
+            // a - a
             case SUBTRACTION:
                 result = lCoeff - rCoeff;
                 evaluatedExpr.varCoeff = result;
@@ -431,11 +435,9 @@ exprElement evaluate(treeNode* node)
                 break;
         }
     }
-    //
-    
     return node->content;
 }
-
+ // Function to reduce similar variables
 int reduceSimilarTerms(treeNode* root)
 {
     treeNode* stack[MAX_STACK_SIZE];
@@ -483,7 +485,7 @@ int reduceSimilarTerms(treeNode* root)
                 char var = node->content.data.variable;
                 unsigned int symbol = 1u << (var - 'a');
                 bool isUnique = (symbol & uniqueSymbols) == 0;
-
+                // Found first variable
                 if (firstVarNode == NULL && isUnique) {
                     uniqueSymbols |= symbol;
                     symbCount++;
@@ -491,6 +493,7 @@ int reduceSimilarTerms(treeNode* root)
                     curSymbolMask = symbol;
                     firstOper = curOper;
                 }
+                // Found second variable. Check if they are the same
                 else {
                     secondVarNode = node;
                     if (firstVarNode == NULL) {
@@ -509,7 +512,7 @@ int reduceSimilarTerms(treeNode* root)
             }
             secondVarNode = NULL;
         }
-
+        // Reduce two found variables
         if (firstVarNode != NULL && secondVarNode != NULL) {
             exprElement evaluatedExpr;
             double lCoeff = firstVarNode->content.varCoeff;
@@ -563,7 +566,7 @@ int reduceSimilarTerms(treeNode* root)
 
     return 0;
 }
- 
+ // Function that generally simplifies the tree
 void simplifyTree(syntaxTree* tree, treeNode* root)
 {
     evaluate(root);
@@ -571,6 +574,8 @@ void simplifyTree(syntaxTree* tree, treeNode* root)
     int top = -1;
     stack[++top] = root;
     operatorType curOper = UNKNOWN_OPERATOR;
+    // Search for every '+' or '-' in the tree then call
+    // reduceSimilarTerms(node);
     while (top >= 0) {
         treeNode* node = stack[top--];
         treeNode* lNode = node->leftChild;
@@ -618,7 +623,7 @@ void printTree(treeNode* root, int indent)
     printTree(root->leftChild, indent + 1);
     return;
 }
-
+ // Function to make an expression string ouf of AST
 char* toInfix(treeNode* root, operatorType prevOper)
 {
     char* result = malloc(MAX_LEN * sizeof(char));

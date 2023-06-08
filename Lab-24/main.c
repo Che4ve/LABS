@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "globals.h"
 #include "mathparser.h"
-
+ // Function to print the menu options
 void printMenu(void) 
 { 
     printf("    1. Print back expression.\n");
@@ -12,18 +11,15 @@ void printMenu(void)
     printf("    4. Enter new expression.\n");
     printf("    0. Exit.\n");
 }
-
-
-int main(int argc, char** argv)
+ int main(int argc, char** argv)
 {
     char inputS[MAX_LEN + 1];
     inputS[MAX_LEN] = '\0';
     rpnQueue* output;
     syntaxTree* ast;
     char* infixExpr = NULL;
-
-    int choice;
-    // Options enumeration
+     int choice;
+    // Enumeration for menu options
     enum {
         EXPR_PRINT = 1,
         AST_PRINT  = 2,
@@ -31,17 +27,19 @@ int main(int argc, char** argv)
         NEW_EXPR   = 4,
         QUIT       = 0
     };
+     // Main loop for user input and processing
     do {
         printf("Enter expression: ");
         fgets(inputS, MAX_LEN, stdin);
         inputS[strcspn(inputS, "\n")] = '\0';
         output = parseExpr(inputS);
         ast = buildSyntaxTree(output);
-        
+         // Loop for menu and user choices
         do {
             printMenu();
             scanf("%d", &choice);
             getchar();
+             // Process user choice
             switch (choice) {
                 case EXPR_PRINT: {
                     if (infixExpr != NULL) {
@@ -84,16 +82,12 @@ int main(int argc, char** argv)
                 }
             }
         } while (choice != NEW_EXPR && choice != QUIT);
-
-
-    free(infixExpr);
-    infixExpr = NULL;
-    freeTree(ast->root);
-    free(ast);
-    freeRpnQueue(output);
-
-    } while (choice != QUIT);
-
-    
-    return 0;
+         // Free memory and reset pointers
+        free(infixExpr);
+        infixExpr = NULL;
+        freeTree(ast->root);
+        free(ast);
+        freeRpnQueue(output);
+     } while (choice != QUIT);
+     return 0;
 }

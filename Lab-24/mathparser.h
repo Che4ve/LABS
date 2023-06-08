@@ -6,8 +6,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
-#include "globals.h"
 
+#define MAX_LEN 300
 #define MAX_STACK_SIZE 250
 
 typedef enum {
