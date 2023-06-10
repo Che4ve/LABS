@@ -110,8 +110,8 @@ int unloadOperatorStack(operatorType* stack, int top)
 rpnQueue* parseExpr(char* inputStr)
 {
     int len = 0;
-    for(len; inputStr[len] != '\0'; ++len);
-     operatorType operatorStack[MAX_STACK_SIZE];
+    for(; inputStr[len] != '\0'; ++len);
+    operatorType operatorStack[MAX_STACK_SIZE];
     int stackTop = -1;
     rpnQueue* outputQueue = (rpnQueue*)malloc(sizeof(rpnQueue));
     outputQueue->queue = (exprElement*)calloc(MAX_LEN, sizeof(exprElement));
@@ -566,6 +566,37 @@ int reduceSimilarTerms(treeNode* root)
 
     return 0;
 }
+
+void expandVarNode(treeNode* node)
+{
+    if (node == NULL || node->content.type != VARIABLE) {
+        return;
+    }
+    exprElement expr = node->content;
+    if (expr.varCoeff == 1.0 || expr.varCoeff == 0.0) {
+        return;
+    }
+
+    exprElement coeffExpr;
+    coeffExpr.type = VALUE;
+    coeffExpr.data.value = expr.varCoeff;
+
+    exprElement varExpr;
+    varExpr.type = VARIABLE;
+    varExpr.data.variable = expr.data.variable;
+    varExpr.varCoeff = 1.0;
+
+    node->leftChild = initTreeNode(coeffExpr, node);
+    node->rightChild = initTreeNode(varExpr, node);
+
+    expr.type = OPERATOR;
+    expr.data.oper = MULTIPLICATION;
+    expr.varCoeff = 0.0;
+
+    node->content = expr;
+    return;
+}
+
  // Function that generally simplifies the tree
 void simplifyTree(syntaxTree* tree, treeNode* root)
 {
@@ -599,6 +630,29 @@ void simplifyTree(syntaxTree* tree, treeNode* root)
         }
     }
     evaluate(root);
+    top = -1;
+    stack[++top] = root;
+    while (top >= 0) {
+        treeNode* node = stack[top--];
+        treeNode* lNode = node->leftChild;
+        treeNode* rNode = node->rightChild;
+
+        if (lNode != NULL) {
+            stack[++top] = lNode;
+        }
+        if (rNode != NULL) {
+            stack[++top] = rNode;
+        }
+
+        exprElement expr = node->content;
+
+        bool isVar = expr.type == VARIABLE;
+
+        if (isVar) {
+            expandVarNode(node);
+        }
+    }
+    return;
 }
 
 void printTree(treeNode* root, int indent) 
